@@ -1,0 +1,66 @@
+要管理某个类，必须有这个类对应的MBean接口，包含在MBean接口中的方法都将是可以管理的。
+MBean起名的规范是原类名+MBean字样。
+
+步骤：
+	1、先创建了一个 MBeanServer，用来做 MBean 的容器  
+	2、将 Hello 这个类注入到 MBeanServer 中，注入需要创建一个ObjectName类  
+	3、创建一个 AdaptorServer，这个类将决定MBean 的管理界面，这里用最通的Html 型界面。AdaptorServer其实也是一个 MBean。  
+	4、ghl:name=HelloWorld的名字是有一定规则的，格式为：“域名:name=MBean名称”，域名和 MBean 名称都可以任意取。 
+	5、运行HelloAgent，然后打开网页：http://localhost:8082/
+	
+
+JMX架构中的各层及组件
+	1、工具层（Instrumentation Level） 
+		(a) MBeans （标准的，动态的，开放的和模型MBeans） 
+		(b) 通知模型：Notification、NotificationListener 等类 
+		(c) MBean元数据类：Attribute、Opreator 等类 
+	2、代理层（Agent Level） 
+		(a) MBean Server 
+		(b) 代理服务。如前一篇的HtmlAdaptorServer 等。 
+
+MBean中有getter和setter 的就是属性，如前一篇的Hello 类中Name。如果只有getter则表示该属性只读。一共有四种MBean，如下： 
+	1. 标准MBeans （Standard MBeans）设计和实现是最简单的，这类MBean 使用自己的方法名作为管理接口； 
+	2. 动态MBeans（Dynamic MBeans）必须实现一个指定的接口，由于动态MBeans在运行期间暴露它们的管理接口，因此更为灵活； 
+	3. 开放MBeans （Open MBeans）属于动态MBeans，这类MBean 依靠基础数据类型来实现通用管理，并为友情用户进行自我声明； 
+	4. 模型MBeans （Model MBeans）同样也是动态MBeans，这类MBeans 是完全可配置的，在运行期间进行自我声明；它们为资源动态工具提供一个一般性的，有默认行为的MBeans类。 
+       
+jmx notification的组成
+	1、Notification，相当于一个信息包，封装了需要传递的信息
+	2、Notification broadcaster，相当于一个广播器，把消息广播出去
+		不需要自己实现
+	3、Notification listener，监听器，监听广播出来的Notification消息
+	4、Notification filter，只是一个过滤器，过滤掉不需要的Notification消息
+       
+       
+ 动态MBeans
+ 	 动态MBean是在运行期才定义它的属性和方法，也就是说它有什么属性和方法是可以动态改变的。
+ 	 动态MBean主要利用一些辅助类（构造函数类MBeanConstructorInfo、属性类MBeanAttributeInfo、方法类MBeanOperationInfo）来完成这个功能
+ 	 所有的动态MBean必须实现DynamicMBean接口。DynamicMBean 写好后，使用方法和普通的MBean一样。      
+	 * 1、实现于接口DynamicMBean 
+	 * 2、借助于各种辅助类完成一个类的构造。
+	 * 	(a)构造函数类 MBeanConstructorInfo
+	 * 	(b)属性类MBeanAttributeInfo
+	 * 	(c)方法类MBeanOperationInfo 
+	 * 3、这里所有public方法是实现于DynamicMBean 的。
+	 * 	setAttribute设置属性、
+	 * 	getAttribute 取得属性、
+	 * 	setAttributes设置一组属性、 
+	 * 	getAttributes取得一组属性、
+	 * 	invoke方法调用、
+	 * 	getMBeanInfo 
+	 * 		MBeanServer 由这个方法得到关键的MBean 类的构造信息。 
+	       
+ 总结 
+     动态MBean 的代码稍显复杂，但对于一些特殊需求的情况，它将显示出强大威力。而且它还是模型MBeans （Model MBeans）的基础。
+     不过在一般的项目中，动态MBean 还是用得比较少，所谓利器深藏之而不用，非常时方现光芒。       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       

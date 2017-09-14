@@ -1,0 +1,212 @@
+jquery-1.7.2.js 未压缩版本，有注释
+jquery-1.7.2-min.js 压缩版，没有注释
+
+所有 jQuery 函数位于一个 document ready 函数中：
+	$(document).ready(function(){
+		--- jQuery functions go here ----
+	});
+	或者
+		$(function(){
+			--- jQuery functions go here ----
+		});
+	
+console.log
+	控制台日志
+	与alert的区别是，他写到控制台
+	
+jQuery选择器
+	id选择器
+		$('#loginButton') 选取id=loginButton的元素
+	元素选择器
+		$('p')//<p>元素
+	类选择器
+		$('.class')类选择器
+	层级选择器
+		$('form input')-form下的所有input元素，input可能是form儿子、孙子、重孙
+		$('form > input')-form下的所有input元素，input只能是form的儿子
+		$('label + input')-所有紧跟在label元素之后的第一个input元素
+		$("form ~ input")-所有的input元素，并且是form的兄弟姐妹
+	内容选择器
+		$("div:contains('John')")-给定文本含有John内容的元素
+		$("td:empty")匹配所有不包含子元素或者文本的空元素
+		$("div:has(p)").addClass("test");给所有包含 p 元素的 div 元素添加一个 text 类
+		$("td:parent")-匹配所有的含有子元素或者文本的td元素
+	
+	$(document) 选取document对象元素
+	$(input[nullmsg]) 选取所有带nullmsg属性的input元素
+	$(":input") 所有 <input> 元素 
+	$(":checked") 所有被选中的 input 元素 
+	
+jQuery文档操作 
+	text() - 设置或返回所选元素的文本内容 
+	html() - 方法返回或设置被选元素的内容 (inner HTML)
+		设置内容
+			$(selector).html(content) 
+		获取内容
+			$(selector).html()
+	val() - 设置或返回表单字段的值
+	
+jQuery属性操作
+	返回属性的值
+		$(selector).attr(attribute)
+	设置属性的值
+		$(selector).attr(attribute,value)
+
+jQuery事件
+	click()-当点击元素时，会发生 click 事件。当鼠标指针停留在元素上方，然后按下并松开鼠标左键时，就会发生一次 click。
+	$(selector).click(function)
+		function 可选。规定当发生 click 事件时运行的函数。 
+jQuery CSS操作 	
+	css()-方法返回或设置匹配的元素的一个或多个样式属性。
+	返回第一个匹配元素的 CSS 属性值。
+		$(selector).css(name)参数 描述 
+			name 必需。规定 CSS 属性的名称。该参数可包含任何 CSS 属性。比如 "color"。 
+			注释：当用于返回一个值时，不支持简写的 CSS 属性（比如 "background" 和 "border"）。
+	设置所有匹配元素的指定 CSS 属性。
+		$(selector).css(name,value)参数 描述 
+			name 必需。规定 CSS 属性的名称。该参数可包含任何 CSS 属性，比如 "color"。 
+			value 可选。规定 CSS 属性的值。该参数可包含任何 CSS 属性值，比如 "red"。如果设置了空字符串值，则从元素中删除指定属性。
+	 
+
+jQuery效果
+	stop()-方法停止当前正在运行的动画。
+		$(selector).stop(stopAll,goToEnd)参数 描述 
+			stopAll 可选。规定是否停止被选元素的所有加入队列的动画。 
+			goToEnd 可选。规定是否允许完成当前的动画。该参数只能在设置了 stopAll 参数时使用。
+	show()-如果被选元素已被隐藏，则显示这些元素：
+		$(selector).show(speed,callback)参数 描述 
+			speed 可选。规定元素从隐藏到完全可见的速度。默认为 "0"。
+				可能的值：
+					毫秒 （比如 1500） 
+					"slow" 
+					"normal" 
+					"fast" 
+				在设置速度的情况下，元素从隐藏到完全可见的过程中，会逐渐地改变其高度、宽度、外边距、内边距和透明度。
+			callback 可选。show 函数执行完之后，要执行的函数。除非设置了 speed 参数，否则不能设置该参数。
+				 
+	animate()-执行 CSS 属性集的自定义动画。该方法通过CSS样式将元素从一个状态改变为另一个状态。CSS属性值是逐渐改变的，这样就可以创建动画效果。只有数字值可创建动画（比如 "margin:30px"）。字符串值无法创建动画（比如 "background-color:red"）。
+		注释：使用 "+=" 或 "-=" 来创建相对动画（relative animations）。
+		$(selector).animate(styles,speed,easing,callback)
+			styles 必需。规定产生动画效果的 CSS 样式和值。
+				可能的 CSS 样式值（提供实例）：
+					backgroundPosition 
+					borderWidth 
+					borderBottomWidth 
+					......
+			speed 可选。规定动画的速度。默认是 "normal"。
+				可能的值：
+					毫秒 （比如 1500） 
+					"slow" 
+					"normal" 
+					"fast" 
+				 
+			easing 可选。规定在不同的动画点中设置动画速度的 easing 函数。
+				内置的 easing 函数：
+					swing 
+					linear 
+				扩展插件中提供更多 easing 函数。
+			callback 可选。animate 函数执行完之后，要执行的函数。
+		$(selector).animate(styles,options)参数 描述 
+			styles 必需。规定产生动画效果的 CSS 样式和值（同上）。 
+			options 可选。规定动画的额外选项。
+			可能的值：
+				speed - 设置动画的速度 
+				easing - 规定要使用的 easing 函数 
+				callback - 规定动画完成之后要执行的函数 
+				step - 规定动画的每一步完成之后要执行的函数 
+				queue - 布尔值。指示是否在效果队列中放置动画。如果为 false，则动画将立即开始 
+				specialEasing - 来自 styles 参数的一个或多个 CSS 属性的映射，以及它们的对应 easing 函数 
+		 
+jQuery遍历
+	each()-为每个匹配元素规定运行的函数。
+		提示：返回 false 可用于及早停止循环。
+		$(selector).each(function(index,element))
+			function(index,element)必需。为每个匹配元素规定运行的函数。
+				index - 可选。选择器的 index 位置 
+				element -可选。当前的元素（也可使用 "this" 选择器） 
+				 
+	
+	is()- 根据选择器、元素或 jQuery 对象来检测匹配元素集合，如果这些元素中至少有一个元素匹配给定的参数，则返回 true。
+	.is(selector)
+		selector 字符串值，包含匹配元素的选择器表达式。 
+	与其他筛选方法不同，.is() 不创建新的 jQuery 对象。相反，它允许我们在不修改 jQuery 对象内容的情况下对其进行检测。这在 callback 内部通常比较有用，比如事件处理程序。
+
+cookie插件
+	首先包含jQuery的库文件，在后面包含 jquery.cookie.js 的库文件。
+		<script type="text/javascript" src="js/jquery-1.6.2.min.js"></script>
+		<script type="text/javascript" src="js/jquery.cookie.js"></script> 	
+	创建一个会话cookie：
+		$.cookie(‘cookieName’,'cookieValue’);
+		注：当没有指明cookie时间时，所创建的cookie有效期默认到用户浏览器关闭止，故被称为会话cookie。
+	创建一个持久cookie：
+		$.cookie(‘cookieName’,'cookieValue’，｛expires：7｝);
+		注：当指明时间时，故称为持久cookie，并且有效时间为天。
+	创建一个持久并带有效路径的cookie：
+		$.cookie(‘cookieName’,'cookieValue’，｛expires：7，path：’/'｝);
+		注：如果不设置有效路径，在默认情况下，只能在cookie设置当前页面读取该cookie，cookie的路径用于设置能够读取cookie的顶级目录。
+	创建一个持久并带有效路径和域名的cookie：
+	$.cookie(‘cookieName’,'cookieValue’，｛expires：7，path：’/'，domain: ‘chuhoo.com’，secure: false，raw:false｝);
+		注：domain：创建cookie所在网页所拥有的域名；secure：默认是false，如果为true，cookie的传输协议需为https；raw：默认为false，读取和写入时候自动进行编码和解码（使用encodeURIComponent编码，使用decodeURIComponent解码），关闭这个功能，请设置为true。
+	获取cookie：
+		$.cookie(‘cookieName’);   //如果存在则返回cookieValue，否则返回null。
+	删除cookie：
+		$.cookie(‘cookieName’,null);
+		注：如果想删除一个带有效路径的cookie，如下：$.cookie(‘cookieName’,null,{path:’/'});
+			
+jQuery Ajax 
+
+ajax请求
+	.load()-方法从服务器加载数据，并把返回的数据放入被选元素中。它不是一个全局函数
+		$(selector).load(URL,data,callback);
+			必需的 URL 参数规定您希望加载的 URL。
+			可选的 data 参数规定与请求一同发送的查询字符串键/值对集合。
+			可选的 callback 参数规定当 load() 方法完成后所要允许的回调函数。回调函数可以设置不同的参数：
+				responseTxt - 包含调用成功时的结果内容 
+				statusTXT - 包含调用的状态 
+				xhr - 包含 XMLHttpRequest 对象 
+		这是示例文件（"demo_test.txt"）的内容：
+		<h2>jQuery and AJAX is FUN!!!</h2>
+		<p id="p1">This is some text in a paragraph.</p>
+	$.ajax()- 方法通过 HTTP 请求加载远程数据。该方法是 jQuery 底层 AJAX 实现。简单易用的高层实现见 $.get, $.post 等。$.ajax() 返回其创建的 XMLHttpRequest 对象。大多数情况下你无需直接操作该函数，除非你需要操作不常用的选项，以获得更多的灵活性。
+		最简单的情况下，$.ajax() 可以不带任何参数直接使用。
+		注意：所有的选项都可以通过 $.ajaxSetup() 函数来全局设置。
+		jQuery.ajax([settings])参数 描述 
+		settings 可选。用于配置 Ajax 请求的键值对集合。
+			async 
+				类型：Boolean
+				默认值: true。默认设置下，所有请求均为异步请求。如果需要发送同步请求，请将此选项设置为 false。
+				注意，同步请求将锁住浏览器，用户其它操作必须等待请求完成才可以执行。
+	$.post()方法通过 HTTP POST 请求从服务器载入数据。
+		jQuery.post(url,data,success(data, textStatus, jqXHR),dataType) 
+			url 必需。规定把请求发送到哪个 URL。 
+			data 可选。映射或字符串值。规定连同请求发送到服务器的数据。 
+			success(data, textStatus, jqXHR) 可选。请求成功时执行的回调函数。 
+			dataType 可选。规定预期的服务器响应的数据类型。
+				默认执行智能判断（xml、json、script 或 html）。
+		该函数是简写的 Ajax 函数，等价于：
+			$.ajax({
+			  type: 'POST',
+			  url: url,
+			  data: data,
+			  success: success,
+			  dataType: dataType
+			});			
+					 
+jQuery工具
+	jQuery.each(object, [callback])-返回值Object
+	通用例遍方法，可用于例遍对象和数组。
+	不同于例遍 jQuery 对象的 $().each() 方法，此方法可用于例遍任何对象。回调函数拥有两个参数：第一个为对象的成员或数组的索引，第二个为对应变量或内容。如果需要退出 each 循环可使回调函数返回 false，其它返回值将被忽略。
+	参数：
+		object:需要例遍的对象或数组。
+		callback(index,vaule):每个成员/元素执行的回调函数。
+			index:数组元素的索引
+			value:该索引对应的值
+	 遍历数组：
+	 	$.each( [0,1,2], function(i, n){
+		  alert( "Item #" + i + ": " + n );
+		});
+	例遍对象，同时使用成员名称和变量内容。
+		$.each( { name: "John", lang: "JS" }, function(i, n){
+		  alert( "Name: " + i + ", Value: " + n );
+		});						 
+ 

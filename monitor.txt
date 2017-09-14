@@ -1,0 +1,1 @@
+在jsp页面填写url的时候，不要以/开头，这样组成的url是 localhost:8080/xxxx,要以相对路径开头如，sms/addSmsPara.do:localhost:8080/monitor/sms/addSmsPara.do

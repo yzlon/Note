@@ -1,0 +1,191 @@
+HTML、CSS标记语言
+JavaScript 编程语言
+document.getElementById("text1").value 得到的值是string类型的
+在js的角度看，html的所有标签都是对象
+
+script标签可以放到文档的任意位置，但是，放在靠前的位置，全局的变量获取后面文档的元素时，是获取不到的，文档是顺序加载的。
+页面可以有多个script标签
+可以进入的方式引入js文档<script src="xxxx.js"></script>
+script的标签的属性type要么不写，要么要写正确type="text/javascript"
+定义一个匿名函数并直接调用
+	(function(){})();
+
+HTML和CSS属性的修改方式
+	HMTL：对象.HTML属性=值；
+		document.getElementById("id名"); 
+	CSS:对象.style.CSS属性=值；//一定要带style
+
+获取对象的方法：
+	document.getElementById(); 
+	属性的值修改后都是立即生效
+事件 (鼠标事件.html)
+	点击
+	改变图片大小
+	开关灯
+	双标签和容器标签！！
+		<div>this is div <p>duanluo</p></div>
+		innerHTML:对象中的所有内容（文本内容和标签内容），就是2个标签之间的内容。->this is div <p>duanluo</p>
+		innerText:文本内容，不含标签->this is div duanluo
+		
+表单事件
+	onfocus 获得焦点
+	onblur   失去焦点
+	onsubmit 提交事件
+	onchange 发生改变
+	onreset 重置事件  
+键盘事件
+	onkeyup
+	onkeydown
+	onkeypress
+窗口事件
+	onload:页面加载完成之后立刻执行的事件
+	2种方式
+		1、<script>window.onload=init</script>//注意这里函数名init后面没有括号，否则就是执行了
+		2、<body onload="init()></body>
+	
+Event：事件发生时的相关的信息。
+	Event必须通过参数传递的方式传递给函数，才可以用
+	
+	Event.clientX:x的坐标
+	Event.clientY:y的坐标
+	Event.target:事件源对象
+		var obj = event.target;//相当于var obj = document.getElementById("id1");
+		
+
+标签对象
+	案例：点出漫天小星星
+		1、让页面点出星星来
+			(a)创建标签对象：
+				var obj = document.createElement("标签名");
+			(b)添加属性
+				obj.src="star.jgp";
+			(b)把对象放到body里面：
+				document.body.appendChild(标签对象);//放到最后位置
+				document.body就是body对象
+				document.documentElementhtml:标签对象
+			margin:不会触发事件。
+	
+	this: 代表的是当前对象，谁发生的事件，this就代表谁。代表调用者。
+	
+	
+javascript由三部分组成
+	ECMAScript
+	BOM
+		浏览器对象:broswer object Model
+		网页一打开就存在
+	DOM	
+		文档对象模型：document object model
+		操作的代码
+		document是连接DOM和BOM的桥梁
+		window对象最高级（最底层）
+		
+	
+	 window
+	 	frames
+	 	location
+	 		location.href="url";//可以设置当前页面直接跳到新的url
+	 	document----------
+	 		
+window的方法
+	alert();
+	prompt();显示可提示用户输入的对话框。
+	confirm() 显示带有一段消息以及确认按钮和取消按钮的对话框。 
+	open(url,name,features);
+		url:要开的url
+		name：窗口的名字
+		features：
+			channelmode=yes|no|1|0 是否使用剧院模式显示窗口。默认为 no。 
+			directories=yes|no|1|0 是否添加目录按钮。默认为 yes。 
+			fullscreen=yes|no|1|0 是否使用全屏模式显示浏览器。默认是 no。处于全屏模式的窗口必须同时处于剧院模式。 
+			height=pixels 窗口文档显示区的高度。以像素计。 
+			left=pixels 窗口的 x 坐标。以像素计。 
+			location=yes|no|1|0 是否显示地址字段。默认是 yes。 
+			menubar=yes|no|1|0 是否显示菜单栏。默认是 yes。 
+			resizable=yes|no|1|0 窗口是否可调节尺寸。默认是 yes。 
+			scrollbars=yes|no|1|0 是否显示滚动条。默认是 yes。 
+			status=yes|no|1|0 是否添加状态栏。默认是 yes。 
+			titlebar=yes|no|1|0 是否显示标题栏。默认是 yes。 
+			toolbar=yes|no|1|0 是否显示浏览器的工具栏。默认是 yes。 
+			top=pixels 窗口的 y 坐标。 
+			width=pixels 窗口的文档显示区的宽度。以像素计。 
+	close
+		将关闭有 window 指定的顶层浏览器窗口。某个窗口可以通过调用 self.close() 或只调用 close() 来关闭其自身。
+		只有通过 JavaScript 代码打开的窗口才能够由 JavaScript 代码关闭。这阻止了恶意的脚本终止用户的浏览器。
+
+定时器：
+	时间是毫秒
+	一次性定时器：var dsq = window.setTimeout("js代码", 时间t);
+		在时间t之后执行js代码（只会执行一次）
+	反复性执行：window.setInterval();
+		每过t执行一次js代码。
+	取消定时器
+		clearTimeout(dsq)
+		clearInterval(dsq)
+			
+图片切换
+	1、定时器：反复性定时器
+	2、页面加载完成之后才会去切换图片：加载事件onload
+	3、鼠标放到图片上，图片停止切换，鼠标离开之后，又开始动。
+		
+	4、鼠标放到按钮列表上，图片停止到对应的图片。背景也要变换。
+		ul li
+	5、鼠标离开列表，图片自动切换，背景也自动切换。
+	
+tab标签式浏览
+	原理：ul li +div +css
+	
+找对象的方法
+	id：document.getElementById("id");
+	tag:document.getElementsByTagName("p");
+		返回是一个集合
+		扩展：
+			对象.getElementsByTagName("tagname");
+	name:getElementsByName
+		返回一个集合
+	classname：getElementsByClassName();
+		返回的是一个集合（这个函数只有firefox支持）
+	document.images;
+		返回img集合
+	document.links
+		返回a集合
+	document.forms
+		返回form集合
+	document.body
+		返回body标签对象
+	document.documentElement:HTML标签对象
+	event:事件对象
+	this:当前对象
+	
+DOM:
+	火狐浏览器中空白处也是一个节点
+	parentNode:父节点
+	childNodes:子节点
+	firstChild:第一个子节点
+	lastChild:最后一个子节点
+	nextSibling:一个姐妹或兄弟节点
+	element.previousSibling：上一个兄弟或者姐妹节点
+	
+绑定一个事件：	
+	对象.事件=事件的处理函数名称;
+	在绑定事件的函数中，this可以不用传递，直接使用
+	注意：要想删除一个节点，必须找到它的父节点，调用removeChild()
+	
+	星星游戏：暂停可以用alert("暂停游戏");弹出出对话框来暂停游戏。
+	span 包含一个span 可以生成一个进度条
+	
+
+广告的弹出功能
+	页面加载完成之后开始弹出广告
+	
+固定广告功能
+	div + img + a固定小广告的制作
+
+登录页面的制作
+	用onsubmit函数验证
+	<form action="../demo/demo_form.asp" onsubmit="return checkForm()">
+		这个地方必须用return false|true否则，一定会执行action
+		
+注册提交
+	1、鼠标放到email框里，会提示信息
+	2、鼠标离开就会检测用户所填写的信息
+	3、提示信息是灰色，错误信息是红色

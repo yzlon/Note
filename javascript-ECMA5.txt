@@ -1,0 +1,381 @@
+变量
+	js是一种弱类型的脚本语言
+	var 声明变量
+	必须字母或下划线或$开头
+	不能空格
+	不能超过255
+	区分大小写
+	全局变量
+		方法外部声明的
+		方法内部声明，但是没有加var关键字声明的变量
+			这种全局变量，只有方法执行了才分配空间
+	局部变量
+		方法内部并且使用var声明
+
+简单数据类型
+	number:
+		整数、
+		小数(最高精度是17位)、
+			所以小数相加相减不能直接==,例如 0.1+0.2=0.30000000000000004
+		NaN（not a number）、
+			parserInt("abc");就返回一个NaN
+			parserInt("123abc");返回一个123
+			在js中，只有它自己和自己不等：NaN==NaN false
+		Infinity（正无穷）、-Infinity(负数无穷)
+		
+	undefined:
+		表示这个变量被声明了，但是没有被赋值！
+	null:
+		空值
+	string:
+		字符串类型
+		var name = "yangzhenlong";
+	boolean:
+		布尔类型
+引用数据类型
+	数组
+		var arr = [1,2,3];
+	日期
+		var date = new Date();
+	对象
+		var obj = {};//定义一个空对象
+			obj.name="yangzhenlong";
+			obj.aget=20;
+		var obj = {name:'yangzhenlong',age:20,sex:'man'};//定义并初始化
+
+类型转换
+	1. 转换为字符串类型(to string)
+		当加号“+”作为二元操作符(binary)并且其中一个操作数为字符串类型时，另一个操作数将会被无条件转为字符串类型
+	2. 转为布尔类型(to boolean)
+		a. 数字转为布尔类型(from number)
+			当数字在逻辑环境中执行时，会自动转为布尔类型。0和NaN会自动转为false，其余数字都被认为是true
+		b. 字符串转为布尔类型(from string)
+			和数字类似，当字符串在逻辑环境中执行时，也会被转为布尔类型。空字符串会被转为false，其它字符串都会转为true
+		c. undefined和null转为布尔类型(from undefined and null)
+			当undefined和null在逻辑环境中执行时，都被认为是false
+		d. 对象转为布尔类型(from object)
+			当对象在逻辑环境中执行时，只要当前引用的对象不为空，都会被认为是true。如果一个对象的引用为null，根据上面的介绍，会被转换为false。
+			虽然使用typeof检测null为"object"，但它并不是严格意义上的对象类型，只是一个对象空引用的标识。
+			另外，我们这里的逻辑环境不包括比较操作符(==)，因为它会根据valueOf()和toString()将对象转为其他类型
+		3. 转为数字类型(to number)
+			操作数在数字环境中参与运算时，会被转为相对应的数字类型值，其中的转换规则如下：
+				i. 字符串类型转为数字(from string): 空字符串被转为0，非空字符串中，符合数字规则的会被转换为对应的数字，否则视为NaN
+				ii. 布尔类型转为数字(from boolean): true被转为1，false被转为0
+				iii. null被转为0，undefined被转为NaN
+				iv. 对象类型转为数字(from object): valueOf()方法先试图被调用，如果调用返回的结果为基础类型，则再将其转为数字，
+				如果返回结果不是基础类型，则会再试图调用 toString()方法，最后试图将返回结果转为数字，如果这个返回结果是基础类型，则会得到一个数字或NaN，
+				如果不是基础类型，则会抛出一个异常
+
+typeof操作符
+	alert(typeof a1);//可以输出a1变量的类型
+	alert(typeof null);//null类型的要返回一个object类型
+
+运算符
+	==、
+		类型自动转换、比较的是数值
+	===、
+		比较的是值和数据类型
+	++。。。。。。
+	
+	
+数组：
+	数组本身也是对象，是引用类型
+	js中数组类似于java中的map，长度可以随意改变，元素类型任意
+	定义数组的方式
+		var arr1 = new Array();
+		var arr2 = new Array(2);
+		var arr3 = [1,2,3,4,'abc', new Date()];
+	int newLength = push()末尾插入一个或者多个，返回新的长度
+	var deletedIndex = pop()删除并返回最后一元素
+	shift 删除并返回第一个元素
+	unshift向数组头添加一个或多个元素，返回新的长度	
+	splice(a,b,c,d,e) 删除元素，并向数组添加新元素。 
+		a:开始位置，第一个是0
+		b：删除几个
+		c,d....新加的元素
+	slice(2,4) 从某个已有的数组返回选定的元素 
+	sort() 是按照字符串的大小排序，所以要排序，要自己实现排序功能,自己写一个比较函数，传给sort当参数
+	reverse()  按照集合的位置倒序(不是大小)
+
+	ECMA5:
+		indexOf(pos,value);		
+		lastIndexOf();从后往前找位置
+		every:对数组的每一项进行一个函数function的运行，如果每一项都是true则结果返回true
+		filter()
+		forEach()
+		map:把新的结果返回
+		some()：如果有一个返回true，整体就返回true	
+		reduce(function(prev,cur,index,array){});参数：前一个值，当前值，索引位置，array
+		reduceRight(function(prev,cur,index,array){});从右边开始遍历，参数：前一个值，当前值，索引位置，array
+		
+Object:重点中的重点
+	声明方式
+		var obj1 = new Object();
+		var obj2 = {};
+	定义属性
+		obj1.name = "zhangsan";
+	定义方法：
+		obj1.say = function(){}
+	访问属性
+		obj1.name;或者 obj1["name"];//枚举方式，name必须用引号引起！！
+	删除一个属性或者方法
+		delete obj1.xxx;
+	遍历一个对象的属性和方法
+		for( var attr in obj1){}
+	
+	
+	Object每个实例都会具有下列属性和方法：
+		Constructor:保存着用于创建当前对象的函数。（构造函数）
+			注意alert(obj1.constructor);和 alert(obj1.constructor()) 的区别
+		hasOwnProperty(propertypName);用于检测给定的属性在当前对象中是否存在
+		isPrototypeOf(Object);用于检查传入的对象是否是另一个对象的原型
+		propertyIsEnumerable(propertyName);是用来检测属性是否属于某个对象的,如果检测到了,返回true,否则返回false.
+			1.这个属性必须属于实例的,并且不属于原型.
+			2.这个属性必须是可枚举的,也就是自定义的属性,可以通过for..in循环出来的.
+			只要符合上面两个要求,就会返回true; 
+			constructor属性就是不能的
+		toLocaleString():返回对象字符串表示。该字符串与执行环境的地区对应
+		toString();
+		valueOf();返回对象的字符串、数值或者布尔表示
+		例子：
+			1、实现java中的Map（经典）
+				006_objtest.htm
+			2、利用对象的特性，去掉数组中的重复项
+				枚举方式。
+				007_objtest2.htm
+其他引用类型
+
+单体对象
+	Global对象（全局的）这个对象不存在，无形的对象
+		其内部定义了一些方法和属性：
+			encodeURI、
+				: //等不进行编码 空格编码
+			encodeURIComponent、
+				所有的字符都进行编码
+				这个是常用的
+				
+			decodeURI、encodeURIComponent
+				对上面的编码进行解码
+			eval
+				无形的JavaScript解析器
+				任何字符串都转换成js代码
+				008_objectsingleton.htm
+					//数组字符串:下标识数组的index，对应的值是数组的value
+		            var str4 = ['a', 'b', 'c', 'd'];
+		            var obj1 = eval(str4);
+		            alert("obj1:" + obj1 + "   " + typeof str4);
+		            for (var key in obj1) {
+		                alert(key+ ":" +obj1[key]);// 0:a 1:b 2:c 3:d
+		            }
+		            
+		            //对象字符串{name:'ze', age:30, sex:'man'} 像不像json？
+		            var str5 = "{name: 'ze',age: 30,sex: 'man'}";
+		            var obj2 = eval('(' + str5 + ')');
+		            alert("obj2:" + obj2 + "   " + typeof str5);
+		            for (var key in obj2) {
+		                alert(key+ ":" +obj2[key]);//name:ze age:30 sex:man
+		            }
+						
+			parseInt parseFloat	
+				字符串转换为int或者float
+			escape unescape
+				对 URI进行编码和解码
+			isNaN
+				判断变量不是一个number类型，返回true，是number就返回false
+	
+	Math:和java的一样的
+	
+Date对象
+基本包装类型
+	Boolean、String、Number
+Function类型
+	定义(3中定义方式)
+		1.function 函数名称(参数列表){}
+		2.var 函数名 = function(参数列表){}//函数直接量 ECMAScript
+		3.var 函数名 = new Function(参数1,参数2,参数...,函数体);
+			var test = new Function("a","b", "return a+b;");
+		三者的不同  
+		            function语句         Function构造函数           函数直接量
+		兼容性         完全                  js1.1以上	              js1.2以上
+		形式           句子                   表达式                      表达式               
+		名称           有名                    匿名                       匿名             
+		性质           静态                    动态                       静态           
+		解析时机       优先解析                顺序解析                    顺序解析
+						可以先调用后定义     必须先定义后调用             必须先定义后调用
+		作用域         具有函数作用域          顶级函数（顶级作用域）       函数作用域
+		效率           最高                    最差（每次都要new）                                       
+		js的函数没有返回值类型
+		形参列表不需要指定类型或用var修饰，直接写参数名称即可
+			function test(a,b){}
+		010_function2.html（经典）
+	函数也是一种数据类型，function类型，所以可以把函数当成数据传递到另一个函数。
+		function test1(test2){}
+		function test2(a){}
+		test1(test2);//回调			
+		test1(function(){});//匿名函数回调
+	函数可以嵌套定义，因为他也是一种类型
+		function test1(){ function test2(){}}
+
+
+	函数的参数
+		函数形式参数的个数可以用 test.length输出
+		函数的实际参数，在函数内部就是用一个数组arguments接收的
+		函数参数arguments用的最多的是递归操作
+			arguments.callee返回正在执行函数本身的引用
+			arguments.callee.caller返回调用者的引用
+		caller 返回一个调用当前函数的引用 如果是由顶层调用的话 则返回null
+		callee 返回一个正在被执行函数的引用
+     		callee是arguments对象的一个成员 表示对函数对象本身的引用 它有个length属性（代表形参的长度）
+	call、apply
+		每一个函数都包含这2个非继承来的方法，实际上等于函数体内的this
+		简单用法：绑定一些函数，用于传递参数 调用
+			test1.call(this,a,b);
+			test1.apply(this,[a,b]);
+		更强大的用法是扩充函数赖以运行的作用域
+			//扩充函数赖以运行的作用域
+            window.color = 'red';
+            var obj = {
+                color: 'blue'
+            };
+            function showColor(){
+                alert(this.color);
+            }
+			showColor();//red，showColor的this相当于window
+			showColor.call(this);//传递的也是window和下面的代码相同
+			showColor.call(window);//与上面代码相同
+			showColor.call(obj);//showColor的this就是obj
+		实现继承
+	(function(){})();//定义一个匿名函数，直接进行执行，js中()表示执行
+			
+this对象
+	this对象是指在运行时期基于执行环境所绑定的
+	this总是指向调用者,在全局函数中，this等于window，函数中调用函数，被调用函数中的this等于调用的函数。
+	但是某个函数对象经过new之后，this就是函数对象本身了。如012_funciton5.htm
+			
+执行环境、作用域链
+	每一个执行环境都有一个与之关联的变量对象，环境中定义的所有变量和函数都保存在这个对象中。程序并不能访问这个变量。
+	全局执行环境是最外围的一个执行环境。根据ECMAScript实现所在宿主环境不同，表示执行环境的对象也不同。
+	每一个函数都有一个自己的执行环境。当代码在一个环境中执行时，会创建变量对象的一个作用域链，作用域链的用途保证执行环境有访问权限访问所有的变量和函数
+	环境变量可以一层一成的向上访问，但是不能向下访问
+	
+垃圾收集、块级作用域
+	跟java，c不同的是 for if 中定义的变量，作用域是{}，但是js中这些变量{}之外和之内。所有没有块级概念。
+	js中()表示执行
+		(function(){})();//这样定义的函数，直接进行执行了。
+
+Closure闭包
+	016_function8.htm
+	闭包与函数有紧密联系，它是函数代码
+	要理解闭包，必须理解作用域链
+	闭包：一个函数可以访问另一个函数作用域中的变量。
+	封闭性：类似于java中的private起到一个保护变量的作用
+	
+	
+类
+	第一种形式：工厂模型
+	第二种形式：构造函数
+		new出的不同的对象，但是构造器是相同的，即 p1.constructor == Person == p2.constructor
+		p1 instanceof Person -> true
+		p1 instanceof Object -> true
+	创建对象的方式：
+		1、var p1 = new Person();
+		2、var p2 = Person();//直接调用函数的方式，注意Person中的this不再是p2，而是window
+		3、在另一个对象作用域中调用
+			var o = new Object();
+			Person.call(o,xx,xx,xx);
+
+prototype原型（重要）018_oop2.htm
+	创建函数的时候，每个函数都有一个prototype属性,这个属性其实是一个指针，而这个指针总是指向一个对象，这个对象的用途就是将特定的属性和方法包含在内，起到一个所有示例所共享的作用
+	function Person(){}
+	var obj = Person.prototype;
+	alert(obj.constructor);//输出object Person();
+	obj.name = "z3";
+	obj.age = 30;
+	obj.sayName=function(){alert(this.name)}	//所有对象共有一个函数了
+	
+	019_oop3.htm
+	Object.getPrototypeOf(p1);//取得实例对象的原型对象
+	判断一个对象属性是原型属性还是实例对象本身
+		!obj.hasPropertyof('name') && 'name' in obj//true则name属于原型，不属于实例
+	alert(p1['name']);一定不要alert(p1[name]);注意引号！！！！后面一个是name变量了
+	ECMA5的新特性
+		Object.keys(p1)//返回实例对象的属性列表
+		Object.keys(Person.prototype);//返回原型的属性列表
+			constructor属性不能被枚举，所有不能获得，但是通过下面的方法可以
+		Object.getOwnPropertyNames(Person.prototype);//所有的属性都枚举出来
+		
+	原型的另外一个作用：扩展对象中的属性和方法020_oop4.htm
+		模拟Array中的each方法
+简单原型
+	直接通过对象的字面量来重写整个原型对象（这种方法会改变原型的构造器，变成Objec）
+		function Person(){}
+			Person.prototype= {
+				name:'23',
+				age:20,
+				sex:'man',
+				sayName:function(){
+					alert('我是原型函数');
+				}
+			}; 
+			prototype默认是执行Person的，但是，这个地方是重新赋值了，相当于改变了指针的指向
+	ECMA5中的Object.defineProperty(obj,prop, options)方法可以为原型对象重新加入构造器
+		obj:重新设置构造器的对象
+		prop：设置什么属性
+		options:配置项
+			enumerable true|false//能否枚举
+			value 构造器
+		
+	原型的动态特性
+		对于Person.prototype={}，这样的改变它指针默认值的情况，实例对象必须在原型对象之后创建。
+		先创建原型，再创建实例
+		
+原型对象开发的模式
+	原型对象里所有的属性和方法，被所有构造函数实例化出来的对象所共享。这就带来了问题。
+	组合使用构造函数和原型使用
+	动态原型方法：
+		function Person(name,age){
+			this.name = name;
+			this.age = age;
+			if(typeof this.sayName != 'function'){
+				Person.prototype.sayName=function(){alert(this.name}
+			}
+		}
+	稳妥构造函数方式：durable object 非常安全的环境
+		没有公共属性，不能使用this对象
+		var 定义的内部变量相当于private
+		function Person(name,aget){
+			//创建一个要返回的对象
+			var obj = new Object();
+			//定义私有的变量和函数 private
+			var sex = 'man';
+			var saySex = function(){}
+			//添加一个对外的方法public
+			obj.sayName = function(){alert(name)}
+		}
+
+继承
+	js中的继承是采用原型链的方式实现的	
+	//构造函数 原型对象 实例对象
+	//1、构造函数.prototype=原型对象
+	//2、原型对象.constructor = 构造函数（模板）
+	//3、原型对象.isPrototypeOf（实例对象）
+	
+RegExp类型
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+		

@@ -1,0 +1,112 @@
+th:fragment
+th:replace
+th:include(在3.0中已经被th:insert替代)
+th:insert
+	使用th:fragment给html段指定一个名称，然后通过名称引用，最常用
+		1、通过th:fragment指定一个html段
+			<footer th:fragment="copy"> 
+				© 2011 The Good Thymes Virtual Grocery
+			</footer>
+		
+		2、通过th:insert或th:replace引用html段
+			:: 前面是html页面的相对路径，不需要写后缀(.html)；后面是段的名称，即th:fragment="copy" 中的copy
+				<div th:insert="footer :: copy"></div>
+		3、直接使用html tag引入，不需要写th:fragment（如最开始的例子）
+		 	这种写法，如果top_header中有多个header tag，则都引入进来，适用只有一个相同tag的情况
+				<header th:replace="common/top_header :: header"></header>
+		4、使用html tag的id属性，不需要写th:fragment
+			（1）一个html段，div指定一个id
+				<div id="copy-section">
+					© 2011 The Good Thymes Virtual Grocery
+				</div>
+			（2）引用上面的html段
+				:: 前面是html名称相对路径，不需要写后缀(.html)；后面是html tag的id，id前需要加 #
+				3.0+的写法
+					<div th:insert="~{footer :: #copy-section}"></div>
+				2.0+要这么写 
+					<div th:insert="footer :: #copy-section"></div>
+
+
+th:href
+th:text
+th:src
+th:block
+
+
+变量表达式-语法格式为${ }.
+	th:text="${person.name}"
+选择表达式-又名星号表达式，语法格式为*{ },配合th:object使用
+	th:object="${person}";
+	th:text="*{name}
+链接表达式-语法格式为@{ }.用于href属性的值
+	(1)绝对URL（Absolute URLs）
+		通过指定协议名称（包含http://或https://开头）
+		e.g.
+			<a th:href="@{http://www.thymeleaf/documentation.html}"></a>
+			equals：
+				<a href="http://www.thymeleaf/documentation.html"></a>
+	(2)上下文相关的URL（Context-relative URLs）
+		最常用的如应用程序myapp的访问地址：http://localhost:8080/myapp，那么myapp就是上下文名称。
+		e.g.
+			<a th:href="@{/order/list}"></a>
+			equals：
+				<a href="/myapp/order/list"></a>
+		说明：“/”表示从应用程序根路径开始访问
+		去掉“/”表示相对路径
+	(3)相对于服务器的URL（Server-relative URLs）
+		用法类似2，连接到同一服务器不同应用程序中
+		e.g.
+			<a th:href="@{~/billing-app/showDetails.htm}"></a>
+			equals：
+				<a href="/billing-app/showDetails.htm"></a>
+		note:当前应用程序的上下文myapp将被忽略
+	(4)协议相对URL（Protocol-relative URLs）
+		通常用于，包括外部资源，如样式，脚本等。保证协议（HTTP，HTTPS）用于显示当前页面的绝对URL。
+		e.g.
+			<script th:src="@{//scriptserver.example.net/myscript.js}">...</script>
+			equals:
+				<script src="//scriptserver.example.net/myscript.js">...</script>
+	(5)带参数的URL表达式
+		表达式中可以携带一个或多个参数.
+		e.g.
+			1.<a th:href="@{/order/details(id=3)}"></a>
+			equals：
+				<a href="/order/details?id=3"></a>
+			2.携带多参数：<a th:href="@{/order/details(id=3,action='show_all')}"></a>
+			equals： 
+				<a href="/order/details?id=3&action=show_all"></a>
+文字
+	文本
+		<div th:class="内容">...</div>
+	数字
+		<p>The year is <span th:text="2013">1492</span>.</p>
+		<p>In two years, it will be <span th:text="2013 + 2">1494</span>.</p>
+	布尔值：true,false
+		判定成立的时候，标签才显示
+		<div th:if="${user.isAdmin()} == false">
+		<div th:if="${user.isAdmin() == false}">
+	null：null
+		<div th:if="${variable.something} == null">
+	文字符号：one, sometext, main,…
+
+	连接符
+		+
+	特殊：${}还可以用符号|
+		e.g.
+			1.<span th:text="|Welcome to our application, ${user.name}!|">
+			2.<span th:text="'Welcome to our application, ' + ${user.name} + '!'">
+			3.<span th:text="${onevar} + ' ' + |${twovar}, ${threevar}|">
+条件表达式
+	'xx':'xx'(if ? then:else)
+	e.g.
+		<span th:class="${title} ? 'green' :' red'">样例一</span>
+		分析：if语句返回null,即为false,走else语句，即返回red;不为null,即为true,返回green.
+
+	'xx'(if ? then)
+		e.g.
+			<span th:class="${title1} ? 'green'">样例二</span>
+
+	设置默认表达式?:
+		只有if语句值为null时才会设置为默认表达式
+		e.g.
+			<span th:class="${title2}?: 'blue'">样例四</span>

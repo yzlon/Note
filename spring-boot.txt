@@ -1,0 +1,49 @@
+spring-boot集成logback的时候，不许要增加额外的jar包，只需要在配置文件application.properties中增加如下配置即可
+	#backlog setting
+	logging.config=classpath:logback.xml
+	
+spring-boot要用jsp视图，麻烦的很！！！！！！！！
+	spring boot 在springmvc的视图解析器方面就默认集成了ContentNegotiatingViewResolver和BeanNameViewResolver，在视图引擎上就已经集成自动配置的模版引擎，如下：
+		FreeMarker
+		Groovy
+		Thymeleaf
+		Velocity (deprecated in 1.4)
+		Mustache
+	JSP技术spring boot 官方是不推荐的，原因有三：
+		在tomcat上，jsp不能在嵌套的tomcat容器解析即不能在打包成可执行的jar的情况下解析
+		Jetty 嵌套的容器不支持jsp
+		Undertow
+
+@EnableAutoConfiguration
+	此注解的作用在于让 Spring Boot根据应用所声明的依赖来对 Spring框架进行自动配置，这就减少了开发人员的工作量。
+
+@SpringBootApplication
+	此注解=@Configuration + @EnableAutoConfiguration + @ComponentScan。
+	
+application.properties
+	spring boo默认已经配置了很多环境变量，例如，tomcat的默认端口是8080，项目的contextpath是“/”等等
+	spring boot允许你自定义一个application.properties文件，然后放在以下的地方，来重写spring boot的环境变量或者定义你自己环境变量
+		1、当前目录的 “/config”的子目录下
+   		2、 当前目录下
+		3、classpath根目录的“/config”包下
+		4、classpath的根目录下
+	如果要命名成自己的方式需要用@PropertyResource加载
+		@PropertyResource("my.properties")
+	添加如下Envirement属性，可以读取加载的变量
+		@Autowired
+		private Environment environment;
+		
+implements CommandLineRunner, Ordered
+	Spring Boot应用程序在启动后，会遍历CommandLineRunner接口的实例并运行它们的run方法。
+	可以利用@Order注解（或者实现Order接口）来规定所有CommandLineRunner实例的运行顺序。
+	实现这2个接口的类，必须加上@Component等方式在spring容器中进行注册才加载
+
+@ConfigurationProperties，它可以把同类的配置信息自动封装成实体类
+	首先在配置文件(application.properties)里面，这些信息是这样子滴
+		connection.username=admin
+		connection.password=kyjufskifas2jsfs
+		connection.remoteAddress=192.168.1.1
+	这时候我们可以定义一个实体类在装载配置文件信息
+		@Component
+		@ConfigurationProperties(prefix="connection")
+		public class ConnectionSettings {}

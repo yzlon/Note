@@ -1,0 +1,2 @@
+mq_url=failover:tcp://localhost:61616
+	failover:断线重连，一直重试

@@ -1,0 +1,10 @@
+Layout布局
+	accordion可折叠的分类
+	
+window窗口
+	包含alert(警告框), confirm(确认框), prompt(提示框), progress(进度框)等
+	$.messager.confirm('确认','您确认想要删除记录吗？',function(r){    
+	    if (r){    
+	        alert('确认删除');    
+	    }    
+	});  

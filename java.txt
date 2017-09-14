@@ -1,0 +1,318 @@
+notify和wait必须在同一个synchronized里面出现
+类的普通代码块就是匿名构造方法，在构造方法之前执行
+
+
+反射机制
+	program arguments
+	vm arguments
+		-verbose:class
+		java -verbose:class
+	动态语句块
+		每次new都执行
+	静态语句块
+		只执行一次
+		
+jdk中的classloader
+	bootstrap class loader
+		加载最核心的类
+		没有名字的classloader
+		加载String这样的类的classloader
+			String.class.getClassLoader就是这个
+	extesion class loader
+		加载jre目录的类
+	application class loader
+		我们自己开发的类的加载器
+		ClassLoader.getSystemClassLoader()也可以取到这个classloader
+		
+	app->ext->boot（前面的loader有个后面的引用，用getParent可以得到）
+	
+	
+   	Class c = Class.forName(str)
+   	c.newInstance();
+   	c.getMethods();
+
+
+static修饰的内部类，就相当于把内部类变成了外部类
+
+Thread和Runnable
+   	
+定时器Timer类
+	1. Timer是一个线程安全的单线程的任务调度工具，对于任务的调度有如下几种调度方式
+	   -------------------------------------
+	   a. 当前时间+时延
+	   b. 当前时间+时延+任务执行间隔
+	   c. 当前时间+时延+任务执行周期
+	   d. 指定时间
+	   e. 指定时间+时延
+	   f. 指定时间+时延+任务执行间隔
+	   g. 指定时间+时延+任务执行周期
+	   -------------------------------------
+	   任务执行间隔和任务执行周期区别在于，对于任务执行间隔是指上一次执行开始到下一次执行
+	   之间的时间间隔，而任务执行周期是指从(指定时间+时延)或者(当前时间+时延)确定的时间点
+	   每隔周期长时间执行一次，看起来好像是么有什么区别，其实之间的区别就在于，对于
+	   a. 对于Timer而言，TimerTask执行的时间是不能很准确的确定的，它跟其前面的任务执行的时间
+	   是有关系的，例如其前面的任务执行了个死循环，那它是永久没有执行机会的
+	   b. 那么任务执行间隔类型任务期望执行的时间是不确定的，其具体的执行时间根本就不可能确定
+	   c. 那么任务执行周期类型任务期望执行的时间是确定的，而其具体的执行时间根本就不可能确定
+	   d. 有时间周期的任务是周期执行，而其他的任务只执行一次
+	   e. TimerTask是可以被取消的，只要设置其自己的状态属性就可以了
+	quartz工具
+	
+
+
+线程之间的通信问题
+	线程安全问题可以用银行转账来解释
+	
+	代码块同步块
+		synchronized(){}
+		synchronized(this){}
+	函数同步块
+		非静态函数锁就是this
+		public synchronized void output(){}	
+		静态方法的锁是
+			Output.class字节码
+			public static synchronized void output(){}
+		
+	要用到共同数据（包括同步锁）或共同算法的若干个方法应该归在同一个类身上，这种设计体现了高内聚和程序的健壮性
+	
+	
+	while(condition){this.wait()}
+		这个地方用while而不是用if，防止假唤醒
+	
+	
+	
+	对int类型，用null赋值，会报空指针异常
+	要生成内部类的对象，要先生成外部类的对象，outer = new Outer(); 然后，再outer.new Inner();
+	
+线程范围内共享数据
+	ThreadScopeShareData.java
+	ThreadLocalTest.java
+		ThreadLocal
+			一个ThreadLocal只能代表一个变量，如果要转若干个变量，可以定义一个对象，把所有数据装入这个对象，再存入ThreadLocal变量中。
+		解决线程范围内的数据共享的问题	
+	ThreadLocalTest2.java
+		单例模式
+			饥汉模式
+				//饿汉模式，很饿很着急，所以类加载时即创建实例对象
+				private static User = new User();
+				if(instance == null){ new MyThreadScopeData();}//线程不安全的
+			饱汉模式+双重锁模式
+				if (myThreadScopeData2 == null) {
+				synchronized (MyThreadScopeData2.class) {
+					if (myThreadScopeData2 == null) {
+						myThreadScopeData2 = new MyThreadScopeData2();
+						threadLocal.set(myThreadScopeData2);
+					}
+				}
+		
+	设计4个线程，其中2个每次对j增加1，另外2个线程对j每次减1.
+		MultiThreadShareData.java
+		
+		1、如果每个线程执行的代码相同，可以使用同一个Runnable对象，这个Runnable对象中有那个共享的数据。例如买票系统可以这么做。
+			1)MultiThreadShareData1.java
+		2、如果每个线程执行的代码不同，这时候需要用不同的Runnable对象，有如下两种方式来实现这些Runnbale对象之间的数据共享：
+			1）将共享数据和对共享数据操作的方法封装到另外一个对象中，然后将这个对象逐一传递给各个Runnable对象，每个线程对象对共享数据的操作也调用那个对象封装的方法。
+				这样容易实现针对共享数据进行的各个操作的互斥和通信。
+				MultiThreadShareData2.java MultiThreadShareData3.java
+			2)将这些Runnable对象作为某一个类中的内部类，共享数据作为这个外部类中的成员变量，每个线程对共享数据的操作方法也分配给外部类，
+				以便实现对共享数据进行各个操作的互斥和通信，作为内部类的各个Runnable对象调用外部类的这些方法。
+				MultiThreadShareData4.java
+			3)将上面2中方法组合：将共享数据封装在另外的一个对象中。每个线程对共享数据的操作方法也分配到那个对象身上去完成，对象作为这个外部类中的成员变量或方法中的局部变量（要final类型），每个线程的Runnable对象调用外部类成员变量的方法，或局部变量的方法。
+				MultiThreadShareData5.java
+----------猥琐分界线---以上是java5之前的--------以下是java5----------------	
+ 
+java.util.concurrent
+	java.util.concurrent.atomic 
+		类的小工具包，支持在单个变量上解除锁的线程安全编程。
+	
+	
+线程池
+	Executors.newFixedThreadPool
+	
+	单一线程池
+	如何实现线程死掉后重新启动
+	Callable
+	Runnable
+
+	threadPool.submit
+		Pool中所有的线程都完成了才一起返回。
+		CallableAndFuture.java
+		CallableAndFuture2.java
+	CompletionService
+		哪个完成哪个先返回结果
+		CompletionServiceTest.java
+	
+java.util.cocurrent.locks
+	ReentrantLock
+		Lock相当于传统的synchronized
+		可以直接把synchronized直接用lock替换
+		lock.unlock一定要放到finally语句块里头，无论抛出什么异常，都要释放锁。
+		
+	
+读写锁
+	ReadWriteLock维护了一对相关的锁，一个用于只读操作，另一个用于写入操作。
+	只要没有 writer，读取锁可以由多个 reader 线程同时保持。写入锁是独占的。
+	ReentrantReadWriteLock
+		多个读锁不互斥，读锁与写锁互斥，写锁与写锁互斥。
+		
+		3个线程读，3个线程写
+		共享数据类
+			封装数据
+			封装读写方法
+			
+	设计一个缓存系统的伪代码
+		CacheDemo.java
+		所有数据返回数据，没有数据再查询数据库
+	
+Condition：线程之间的通信
+	类似于Object方法的wait和notify
+	ConditionCommunication.java
+	Condition condition = lock.newCondition();
+	condition.await();
+	condition.signal();
+	
+	一个condition，通知的时候是通知所有的。
+	bp机发射器，建立2个condition的原因
+	jdk  Condition的例子
+	 	class BoundedBuffer {
+		   final Lock lock = new ReentrantLock();
+		   final Condition notFull  = lock.newCondition(); 
+		   final Condition notEmpty = lock.newCondition(); 
+		
+		   final Object[] items = new Object[100];
+		   int putptr, takeptr, count;
+		
+		   public void put(Object x) throws InterruptedException {
+		     lock.lock();
+		     try {
+		       while (count == items.length) 
+		         notFull.await();
+		       items[putptr] = x; 
+		       if (++putptr == items.length) putptr = 0;
+		       ++count;
+		       notEmpty.signal();
+		     } finally {
+		       lock.unlock();
+		     }
+		   }
+		
+		   public Object take() throws InterruptedException {
+		     lock.lock();
+		     try {
+		       while (count == 0) 
+		         notEmpty.await();
+		       Object x = items[takeptr]; 
+		       if (++takeptr == items.length) takeptr = 0;
+		       --count;
+		       notFull.signal();
+		       return x;
+		     } finally {
+		       lock.unlock();
+		     }
+		   } 
+		 }
+		
+	三个condition通信
+		ThreadConditionCommunication.java
+		老大循环10，老二循环20，老三循环30，依次循环
+
+
+BlockingDeque阻塞队列
+
+	
+Semaphore实现信号灯
+	可以维护当前自身的线程个数，并提供了同步机制。
+	SemaphoreTest.java
+		Semaphore sp = new Semphore(3);
+		cacheThreadpool 10个线程
+
+CyclicBarrier
+	表示大家彼此等待，大家集合好后才开始出发，分散活动后又在指定的地点集合。
+	CyclicBarrier.java
+		3个人，到达集合点1，在去集合点2，再去集合点3
+
+CountDownLatch
+	犹如倒计时计数器，调用对象的countDown方法就讲计数器减1，当计数器到达0时，则所有等待着或者单个等待着开始执行。
+	CountDownLatchTest.java
+		单独线程控制计数器对象的countDown，其他线程等待计数器到达0。
+		裁判
+			先减1
+			等3个运动员到终点
+		3个运动员
+			等待裁判减1
+			运动员减1
+			
+Exchange
+	实现2个线程之间的数据交换，2个同时到达才可以解除阻塞，交换数据。
+	ExchangeTest.java
+
+
+java5的阻塞队列
+	Condition的例子，就是一个阻塞队列
+	BlockingQueue
+		ArrayBlockingQueue
+	BlockingQueueTest.java
+		2个线程放入数据，1个线程取数据
+	
+	阻塞队列实现通知的功能
+		2个长度是1的队列实现同步通知功能。
+		BlockingQueueCommunication.java
+			匿名构造方法，在构造方法之前执行
+
+并发集合
+	1、普通集合类线程不安全
+	2、隐患
+		CollectionModifyExceptionTest.java
+			Collection users = ArrayList;
+			//迭代的过程中调用users.remove()
+			//迭代集合的过程中不能对集合进行修改！！！
+				//删除第一个，和倒数第二个之前的，报期望值和总数不等 java.util.ConcurrentModificationException
+				//删除倒数第二个，不报错结束 
+				//删除最后一个，进入死循环
+		1、用CopyOnWriteArrayList可以解决这个问题
+		2、复制一个一样的Collection，用新Collection的迭代器遍历，在旧的Collection上进行操作
+
+空中网的面试题
+	1、现有程序代码模拟产生了16个日志对象，并且需要运行16秒才能打印完这些日志，请在程序中增加4个线程取调用parseLog()方法来分头打印这16个日志对象，
+	程序秩序运行4秒即可打印完成这些日志对象。原始代码如下：
+		package read;
+		public class Test{
+			public static void main(String[] args ){
+				System.out.println("begin:" + SYstem.currentTimeMillins()/1000);
+				/*模拟处理16行日志，下面的代码产生了16个日志对象，当前代码需要运行16秒才能打印完成*/
+				/*修改程序代码，开4个线程，让这个16个对象在4秒内打完*/
+				for(int i = 0; i<16; i++){
+					final String log = "" + ( i+ 1);//这行代码不能改动
+					{
+						Test.parseLog(log);
+					}
+				}
+			}
+			//parseLog方法内部的代码不能改动
+			public static void parseLog(String log){
+			
+				System.out.println(log + ":" + (System.out.println(System.currentTimeMillis()/1000));
+				try{Thread.sleep(1000)}catech(){}
+			}
+		}	
+	
+阻塞线程池
+	FixedAndBlockedThreadPoolExecutorTest.java
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

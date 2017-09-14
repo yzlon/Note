@@ -1,0 +1,252 @@
+web程序需要继承Servlet接口，一般继承HttpServlet类
+在tomcat中webapp目录下，新建项目，比如test，添加文件夹WEB-INF和WEB-INF/classes,还可以添加文件夹WEB-INF/lib，放入需要依赖的jar。添加文件test/web.xml
+在web.xml中配置
+	<servlet>
+		<servlet-name></servlet-name>
+		<servlet-class></servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name></servlet-name>
+		<url-pattern></url-pattern>
+	</servlet-mapping>
+把编译好的class放入到 classes目录中，重启tomcat，访问  http://localhost:8080/test/helloworld
+
+
+servlet的生命周期
+	重写HttpServlet的init，destroy函数
+	同一个server里头serlet对象应该只有一个。
+	init（）只执行一次，第一次初始化的时候
+	
+	加载
+		classloader
+	实例化
+		new 对象
+	初始化
+		initial（SevletConfig）
+	处理请求
+		service doGet doPost
+	退出服务
+		destroy
+	ServletConfig
+		对象里头包含着对servlet的配置信息
+		
+Servlet编程接口
+	GenericServlet所有Servlet的鼻祖
+	httpservlet
+	
+		HttpServletRequest
+		HttpServletResponse
+	
+静态网页的访问
+	直接在浏览器输入服务器+静态页面的名字
+	
+	相对路径
+		当前网页所在的文件的路径
+	response.setContentType("text/html");
+	
+	doPost
+	doGet
+	
+	
+	request.getParameterNames()
+	request.getParameterValues(paraName)
+
+
+Cookie（服务器端写到客户端的文本信息）
+	http协议的无连接性，要求出现一种保存cs间状态的机制
+	以名-值对的形式来保存数据
+	1、服务器可以向客户端写入内容
+	2、只能是文本内容
+	3、客户端可以组织服务器写入
+	4、只能拿自己webapp写入的东西
+	购物车就是都cookie的数据
+
+cookie有2种，
+	一种存到文件，
+	一种存到内存中（属于窗口和子窗口)
+一个servlet或者一个jsp设置的cookie能够被同一路径或者子路径的servlet/jsp能读到，反之不然。
+这个路径指的是URL
+
+
+Session
+	和cookie的区别，他是记录在服务器端
+	Session是和浏览器的窗口和子窗口关联在一起的
+		用jsessionid来区分一个浏览器，
+			这个id是保存到cookie中的，
+			如果浏览器不支持cookie，要通过重写url来实现(hello.jsp?jsessionid=123423)
+				response.encodeURL 
+					1、编码
+					2、在url地址后面加上jsessionid=3234
+session不像cookie一样有路径的问题
+	同一个application下的servlet/jsp可以共享同一个session，前提是，同一个客户端窗口
+	
+	
+application
+	用于保存这个那个webapplication生命周期内都可以访问的数据
+	API中表现为ServletContext：servlet运行的上下文环境，整个webapplictation在内存中的表现
+	通过HttpServlet的getServletContext函数可以拿到
+	
+	
+JSP:就是一个sverlet
+	tomcat的work目录，jsp转换成的java文件和class文件
+
+Jsp传统语法
+	scriptlet
+		<%!   %>
+			可以定义全局变量、类和函数。声明的变量是成员变量，函数是成员方法、类是内部类
+			所以说，函数只能定义到这个标签里面，不能定义到下边的这个里头
+		<% %>声明的变量是局部变量
+			定义局部变量、编写语句，相当于是service函数体里面的东西。
+			所以说，函数不能定义到这个标签里面
+		<%= %>:把变量原封不动的输出，=后面必须是可以转换成字符串的变量或者表达式
+
+	Expression表达式
+	 
+	Comment注释
+		<!-- HTML注释 客户端可以看见-->
+		<%-- jsp注释客户端看不见 --%>
+		<%
+			java的注释方式
+			//
+			/**/
+		%>
+		
+	directive编译指令，相当于在编译期间的命令
+		<%@directive 属性="属性名"%>
+		directive的种类
+			page：指明与jsp container的沟通方式
+				<%@page language="script language"|--目前只能默认java
+					extends="className"|不需要指定，默认 jspbase
+					import="importList"|引入的jar包，多个用逗号隔开
+					buffer="none|kb size"|--none不缓存，默认8k
+					session="true|false"|--是否可以使用sesson默认true
+					autoFlush="true|false"|--缓冲器是否自动清除，默认true
+					isThreadSafe="true|false"|相当于servlet实现thread接口，已经废弃
+					info="infoText"|--任何字符，很少用
+					errorPage="errorPageUrl"|
+					isErrorPage="true|false"|
+					contentType="contentTypeInfo"--如html
+				%>
+			include:将指定的jsp程序或者html文件包含进来（原封不动的包含进来）,先包含进来，再编译。
+				<%@ include file="fileUrl" %> 
+					不能向fileUrl传递参数：不能abc.jsp?name=2342
+
+	action指令
+		<jsp:include />:程序运行后，原封不动的包含
+		<jsp:include page="UrlSpec" flush="true"/>
+		传参数：
+		<jsp:include page="urlspec" flush="true>
+			<jsp:param name="" value="" />
+		</jsp:include>
+	
+		<jsp:forward page="url" flush="true"/>
+		传参数：
+		<jsp:forward page="urlspec" flush="true>
+			<jsp:param name="" value="" />
+		</jsp:forward>
+		
+		response.sendDirect("url")
+		
+		<jsp:forward>使用同一个request：服务端跳转，客户端只是一次请求			
+		response.sendDirect是不同的request：客户端重新进行了另一个页面的请求
+
+jsp:useBean,可以在jsp中使用定义好的Bean
+bean的基本要素
+	必须要有一个不带参数的构造器
+	bean类应该内哟佮公共实例变量，也就是说不允许直接访问实例变量，变量名称首字母必须小写
+	通过getter和setter来读写
+	语法
+		<jsp:useBean id=“bean_name" scope="page|request|session|application" 
+			class="" type="typeName"/>
+				typeName:生成的的对象当什么来用,可是父类，接口本类，默认是本类
+		先查找有没有bean_name的对象，有直接用，没有就创建
+		<jsp:useBean >		</jsp:useBean>
+			<jsp:setProperty name="对象名字" property="" value=""/>
+			<jsp:setProperty name="对象名字" property="" param=""/>
+			<jsp:getProperty name="" property=""/>
+			
+		page
+		request
+		session
+		application
+
+
+乱码问题：
+	<%
+		/*必须知道原来字符串的编码*/
+		String name =request.getParameter("name")
+		byte[] newName = name.getBytes("ISO08859_1");
+		new String(newName, "GBK");
+	%>
+	request.getCharacterEncoding();
+	request.setCharacterEncoding();
+
+
+
+
+
+jsp中的内置对象
+	out:jsp.JspWriter
+		println()
+	request:HttpServletRequest
+		getParameter()
+		getMethod()
+		getParameters()
+		getRequestURL()
+		
+	response:HttpServletResponse
+		addCookie()
+		addHeader()
+		containsHeader()
+		sendError()
+		sendRedirect()
+		setContentType()
+	
+	session:httpSession
+	application  servletContext
+		setAttribute
+		getAttribute
+	pageContex  jsp.pageContext
+	page:java.lang.Object
+	config:servletConfig,一般指的是web.xml
+	exception:java.lang.Throwable
+
+Servlet和Jsp之间的通信
+	
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	

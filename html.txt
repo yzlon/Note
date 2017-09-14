@@ -1,0 +1,6 @@
+<form autocomplete="on|off">属性值
+	on 默认。规定启用自动完成功能。 
+	off 规定禁用自动完成功能。 
+
+	a标签的href='#'可以定义一个空链接，可以制作一个关闭按钮等
+		<a href="#" onclick="close()"></a>
