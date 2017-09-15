@@ -59,7 +59,68 @@ Debug As:
 	Goals:tomcat:run
 	Source:把源码配置进去
 	
+依赖的传递冲突解决
+	maven自己调解原则
+		第一声明者优先原则：谁先定义就用谁的
+		路径近者优先：直接指定依赖，比传递依赖优先
+	排除依赖
+		<dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>activemq-pool</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.activemq</groupId>
+					<artifactId>activemq-client</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+	版本锁定(推荐):指定项目中依赖的版本
+		<dependencyManagement>
+			<dependencies>
+				<dependency>
+					<artifactId></artifactId>
+					<artifactId></artifactId>
+				</dependency>
+			</dependencies>
+		</dependencyManagement>
 	
+ssh项目配置文件的加载过程
+	ssh项目
+	web.xml
+		ContextLoaderListener
+		
+通过maven对项目进行拆分、聚合
+	父工程
+		ssh-parent
+	子模块
+		ssh-dao
+		ssh-service依赖ssh-dao
+		ssh-web依赖ssh-service
+	拆分完成对拆分后的项目进行聚合
+	
+	1、创建父工程:packaging选pom格式,目录结构只有一个pom.xml
+		项目需要的依赖信息，在父工程中定义，子模块继承过程。
+		将各个子模块聚合到一起
+	2、将创建好的父工程发布到本地仓库中
+		将来dao、service、web
+		如果忘记此步骤，
+	3、创建子模块ssh-dao:packaging选jar模式
+		在父项目上右键->new->project->Maven Module:ssh-dao
+	4、创建子模块ssh-service:packaging选jar模式
+		在父项目上右键->new->project->Maven Module:ssh-service
+	5、创建子模块ssh-web:packaging选war模式
+		在父项目上右键->new->project->Maven Module:ssh-web
+		
+	运行方式
+		方式1：运行父工程。父工程将各个子模块聚合到一起。将ssh-web打war包发布到Tomcat
+		方式2：直接运行ssh-web工程
+
+
+
+
+
+
+
 Maven安装配置
 	1. JDK 和 JAVA_HOME
 		确保已安装JDK，并 “JAVA_HOME” 变量已加入到 Windows 环境变量。

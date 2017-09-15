@@ -1,3 +1,6 @@
+批量加载配置
+	classpath*:xxx.xml
+
 	@Bean//默认情况下@Bean生成的bean的ID是和方法名一样的！！！
 	public Book BBook() {}//bean的名字就是BBook
 
