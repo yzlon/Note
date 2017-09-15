@@ -1,0 +1,167 @@
+常用的命令
+	clean
+		注意和project->clean tomcat->clean的区别
+		mvn clean:
+			删掉target目录
+			实际执行的是maven-clean-plugin插件
+	compile
+		mvn compile
+		生成class到target目录
+		实际执行的 是maven-compile-plugin插件
+	test
+		mvn test将目录src/test/java/目录下的以XxxTest.java格式的测试类执行。
+	package
+		mvn package
+			打包到target目录
+	install
+		mvn install
+			把jar包安装到本地仓库
+			其他项目只要添加依赖就可使用。
+maven的生命周期
+	就是maven命令的执行过程。
+	有三套重要的生命周期：
+		CleanLifeCycle：清理的生命周期
+			clean
+		DefaultLifeCycle：默认的生命周期
+			compile、test、package、install、deploy
+		SiteLifeCycle
+			site
+	在一套生命周期里，执行后面的命令，前面的命令自动执行。
+eclipse开发maven项目
+	1、配置m2e插件，有些eclipse自带
+	2、配置maven的安装路径。
+	3、配置本地仓库${M2_HOME}/config/setting.xml
+	4、构建索引
+		window->showview->other->Maven Repository->Local Repository
+	5、创建maven工程
+		Maven Module：创建子模块
+		Maven Project：创建maven项目或者父项目
+			选中create a simple project
+			war、jar、pom（父项目）
+	创建servlet的快速方式
+		项目右键->other->servlet
+	pom.xml添加jar
+		Dependencies->Add->servlet-api-2.5.jar（scope:provide)
+依赖的范围
+	scope     编译classpath有效    测试classpath有效          运行classpath有效          例子
+	compile          Y               Y                  Y         spring-aop.jar                  
+	test                             Y                            junit4.jar
+	provide          Y               Y                            servlet-api-2.5.jar
+	runtime                          Y                  Y         jdbc驱动         
+	system           Y               Y                            本地仓库之外的jar
+	默认是scope范围
+	
+Run As
+	Maven Build:历史执行记录
+	Maven Build……:手动输入命令和参数执行
+		Goals：tomcat:run
+Debug As:
+	Goals:tomcat:run
+	Source:把源码配置进去
+	
+	
+Maven安装配置
+	1. JDK 和 JAVA_HOME
+		确保已安装JDK，并 “JAVA_HOME” 变量已加入到 Windows 环境变量。
+	2. 下载Apache Maven
+	3. 添加 M2_HOME 和 MAVEN_HOME
+		添加 M2_HOME 和 MAVEN_HOME 环境变量到 Windows 环境变量，并将其指向你的 Maven 文件夹。
+	4. 添加到环境变量 - PATH
+	5. 验证
+		完成，以验证它，执行 mvn –version 在命令提示符下，如下图输出结果：
+			C:\Users\Administrator>mvn -version
+
+Maven启用代理访问
+	1. Maven配置文件
+		{M2_HOME}/conf/settings.xml
+		取消注释代理选项proxy，填写您的代理服务器的详细信息。
+Maven本地资源库
+	默认情况下，Maven的本地资源库默认为 .m2 目录文件夹：
+		Windows – C:\Documents and Settings\{your-username}\.m2
+	1. 更新Maven的本地库
+		通常情况下，可改变默认的 .m2 目录下的默认本地存储库文件夹到其他更有意义的名称，例如， maven-repo
+		找到 {M2_HOME}\conf\setting.xml, 更新 localRepository 到其它名称。
+Maven中央存储库
+	默认的 Maven 中央存储库 – http://repo1.maven.org/maven2/ 查找下载。
+	Maven中心储存库网站已经改版本，目录浏览可能不再使用。这将直接被重定向到 http://search.maven.org/。
+	
+Maven添加远程仓库
+	1. Java.net资源库
+		<repositories>
+		    <repository>
+		      <id>java.net</id>
+		      <url>https://maven.java.net/content/repositories/public/</url>
+		    </repository>
+		</repositories>
+	2. JBoss Maven存储库
+	    <repositories>
+	     	<repository>
+				<id>JBoss repository</id>
+				<url>http://repository.jboss.org/nexus/content/groups/public/</url>
+	      	</repository>
+	    </repositories>
+	Maven的依赖库查询顺序更改为：
+		在 Maven 本地资源库中搜索，如果没有找到，进入第 2 步，否则退出。
+		在 Maven 中央存储库搜索，如果没有找到，进入第 3 步，否则退出。
+		在java.net Maven的远程存储库搜索，如果没有找到，提示错误信息，否则退出。
+Maven依赖机制
+定制库到Maven本地资源库
+	1. mvn 安装
+		下载 “kaptcha”，将其解压缩并将 kaptcha-version.jar 复制到其他地方，比如：C盘。发出下面的命令：
+		mvn install:install-file -Dfile=c:\kaptcha-{version}.jar -DgroupId=com.google.code -DartifactId=kaptcha -Dversion={version} -Dpackaging=jar
+	2. 安装完毕后，就在 pom.xml 中声明 kaptcha 的坐标。
+		<dependency>
+		      <groupId>com.google.code</groupId>
+		      <artifactId>kaptcha</artifactId>
+		      <version>2.3</version>
+		 </dependency>
+使用Maven创建Java项目
+	修改jdk版本插件
+	  <build>
+		  <plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+		  </plugins>
+	</build>
+	maven打包
+		在终端输入 mvn package :
+	运行项目
+		从项目的 jar 文件运行应用程序示例
+		C:\worksp\NumberGenerator>java -cp target/NumberGenerator-1.0-SNAPSHOT.jar com.yiibai.App
+使用Maven创建Web应用程序项目
+Maven POM
+Maven 构建生命周期
+Maven 构建配置文件
+Maven存储库
+Maven插件
+Maven创建Java项目
+使用Maven构建和测试Java项目
+Maven外部依赖
+Maven项目文档
+Maven项目模板
+Maven快照
+Maven构建自动化
+Maven依赖管理
+Maven自动化部署
+Maven Web应用
+Eclispe IDE集成Maven
+NetBeans IDE集成Maven
+Eclipse构建Maven项目
+转换基于Maven的Java项目支持Eclipse IDE
+转换基于Maven的Web应用程序支持Eclipse IDE
+使用Maven模板创建项目
+使用Maven构建项目
+使用Maven清理项目
+使用Maven运行单元测试
+将项目安装到Maven本地资源库
+生成基于Maven的项目文档站点
+使用“mvn site-deploy”部署站点（WebDAV例子）
+部署基于Maven的war文件到Tomcat
+用Eclipse创建一个Maven Web项目
