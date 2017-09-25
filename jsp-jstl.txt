@@ -1,0 +1,169 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+1、JSTL全称是JSP Standard Tag Library，即JSP标准标签库；
+2、JSTL中具体包含哪些标签库：
+    1) 大致可以分为5大标签库，分别对应不同的功能，分别是核心标签库、I18N标签库、SQL标签库、XML标签库和函数标签库；
+    2) 核心标签库：提供条件判断、流程控制、属性访问、URL处理以及错误处理等基础功能；
+    3) I18N标签库：提供国际化功能；
+    4) SQL标签库：提供和数据库操作相关的功能；
+    5) XML标签库：提供XML解析、流程控制、转换等功能；
+    6) 函数标签库：提供了一些常用的EL函数标签（就相当于C++的函数库），特别是一些常用的字符串处理函数；
+    
+3. 使用标签库中的标签：
+    1) 和上一章讲过的EL函数的使用完全一样；
+    2) 必须先使用taglib指示元素声明要使用的标签库；
+    3) 属性prefix就是给标签库取一个命名空间，在之后的JSP代码中使用标签库中的标签必须要加命名空间的前缀；
+    4) 属性uri指定标签库的资源定位；
+    5) 例如，要使用JSTL的核心标签库则可以这样声明：<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+    6) 最后在使用JSTL标签的时候注意一定要加上前缀（即命名空间），例如：<c:if>等；
+    
+4. 核心标签库简介：
+    1) 主要的功能包括6大类；
+    2) 逻辑判断/流程处理：包含if、forEach等和普通编程语言类似的程序控制结构；
+    3) 错误处理：此类标签可以捕获异常并进行处理；
+    4) 网页导入/请求调配/网页重定向：虽然JSP标准标签已提供相关的功能，但是JSTL核心标签库提供的相关功能更强大，书写也更简洁；
+    5) 属性处理：比<jsp:set/getProperty>的功能更多更丰富，形式也更简洁；
+    6) 输出处理：提供诸如把输出流中的<、>等HTML字符替换为纯文本字符的功能；
+    7) URL处理：也比JSP标准标签来的更加方便；
+    
+5. 逻辑判断/流程处理标签：
+    1) <c:if>：
+         i. 即实现if语句的功能，可根据某个逻辑判断是否显示Body的内容；
+         ii. if的test属性可以放置EL表达式，如果结果为true就输出该标签所包裹内容，否则就不输出；
+         iii. 例如：
+			<c:if test="${param.name == 'Peter'}">  
+			    <h1>${param.name} is loging!<h1>  
+			</c:if>  
+	 2) JSTL并没有提供else标签，而是用choose-when-otherwise标签来代替else以及switch！！！
+         i. 其实也完全可以替代if标签，只不过if用的太频繁了，所有程序员都难以一个语言没有if，所以还是保留if了；
+         ii. when和otherwise是choose的子标签，每个when给出一个test测试，when成立就执行when，when都不成立就执行最后的otherwise，因此otherwise没有测试条件，choose呢也没有属性，choose-when-otherwise的可以和C语言的switch-case-default相对应；
+         iii. 举例：
+			<c:choose>  
+			    <c:when test="${user.name != null}">  
+			        <h1>logging!</h1>  
+			    </c:when>  
+			    <c:when test="${12 == 12}">  
+			        <h1>Yes!</h1>  
+			    </c:when>  
+			    <c:otherwise>  
+			        <h1>Otherwise!!</h1>  
+			    </c:otherwise>  
+			</c:choose>  
+			
+	3) <forEach>：
+         i. 顾名思义是for循环，而且只提供for一种循环，没有while、do-while等，一切从简；
+         ii. JSTL的forEach可以对Java的数组、Collection（容器）、Interator、Enumeration、Map和字符串进行迭代；
+         iii. 语法格式：<c:forEach var="变量名" items="EL表达式" varStatus="status">XXX</c:forEach>
+         iv. 其中EL表达式返回的是一种上述可迭代的类型的数据，之后JSTL会再每次循环中将var指定的变量名和items中的数据依次绑定在一起，接着就可以在XXX中使用该变量名进行操作；
+			所有JSTL标签中的var都是指变量名的意思，都会将该变量名和某个值（可以是Java对象，也可以是普通的字符串）绑定在一起，然后利用EL表达式来操作该变量名；
+			这种变量名都属于EL表达式，必须用${}的形式来使用它！！！
+         v. 例如：
+		    <c:forEach var="message" items="${messageService.messages}">  
+		        ${message.name} : ${message.text}  
+		    </c:forEach>  
+		 vi. 如果迭代的是数组、容器和Iterator那么就按照上面的做法循环即可，如果是Map的话，那么和var挂钩的对象会是Map.Entry，该对象有getKey和getValue两个getter，因此可以这样迭代：
+			<c:forEach var="item" items="${someMap}">  
+			    Key: ${item.key}<br>  
+			    Value: ${item.value}<br>  
+			</c:forEach>  
+		 vii. 如果迭代的是字符串，那就必须指定一个分隔符，标签会议指定的分隔符来切割给出的字符串，将切割后的各个部分迭代给var，分隔符的属性是dlims，
+		 	如果不指定分隔符，则默认使用逗号","进行分割！例如：
+			<c:forEach var="token" delims=":" items="aa:bb:cc:dd">  
+			    ${token} <br>  
+			</c:forEach>  
+
+6. 错误处理标签：
+    1) 通常在JSP页面中出现错误（比如EL表达式错误、正常的JSP语法错误、转译、编译、运行时错误等等），如果不进行任何处理的话就会发送至错误页面，即使你使用了errorPage属性，也是转发值错误页面，但是如果你想向用户隐藏错误信息而只在当前页面中打印一句“页面错误！”并且不转发页面那该怎么做呢？
+    2) 在Scriptlet中编写try-catch代码当然没有问题，但是JSTL提供了<c:catch>标签可以避免编写Scriptlet；
+    3) 该标签有一个属性，就是var，和该变量名挂钩的默认是一个Java的Exception对象，捕获的异常就会放到该对象中，在<c:catch>模块之后可以加以利用；
+    4) 使用时只要将可能会发生异常的代码包裹在<c:catch>标签中即可（JSTL没有try标签，直接用catch标签当做try标签使用），过了catch标签之后可以在利用if标签判断一下有没有catch到异常，如果catch到了则可以进行进一步的操作，例如：
+		<c:catch var="error">  
+		    ${param.a} + ${param.b} = ${param.a + param.b}  
+		</c:catch>  
+		<c:if test="${error != null}">  
+		    ${error.message} : ${error}  
+		</c:if>  
+		
+7. 网页导入/重定向：
+    1) 首先介绍核心标签的动态导入，使用的标签是<c:import>：
+         i. 它是标准标签<jsp:include>的加强版，转译时都是转译成Dispatcher.include方法，只不过<c:import>比<jsp:include>还多了一个编码的功能；
+         ii. 该标签最重要的参数就是url了，用来指示要导入的网页的URL地址，但该标签和<jsp:include>一样，不支持直接在导入网页的URL中添加额外参数，而是使用<param>标签指定额外参数，例如：
+			<c:import url="xxx.jsp">  
+			    <c:param name="a", value="1" />  
+			    <c:param name="b", value="2" />  
+			</c:import>  
+         iii. 其次，<c:import>标签的另外一个功能就是还可以导入外部JSP页面，也就是说要导入的页面不在当前应用程序中！！此时就要考虑编码问题了，如果要导入的网页和当前网页的编码不一致会出现乱码，因此需要用<c:import>标签的charEncoding来指定导入后应该使用的编码，这样可以使两者的编码保持一致，例如：
+			<c:import url="xxx.jsp" charEncoding="UTF-8" />
+    2) 接着就是重定向标签<c:redirect>：
+         i. 该标签取代Servlet里Response的sendRedirect方法；
+         ii. 属性仍然是url，即重定向的url，如果有额外的参数还是用<c:param>来指示，例如：
+			<c:redirect url="xxx.jsp">  
+			    <c:param name="a", value="1" />  
+			    <c:param name="b", value="2" />  
+			</c:redirect>  	
+		
+8. 属性处理：
+    1) 设置属性：使用<c:set>标签
+         i. 是<jsp:setProperty>标准标签的加强版，标准标签只能设置JavaBean属性，但是<c:set>可以设置更多类型数据的范围属性，而且还可以设置Map类型范围属性的键和值；
+         ii. 该标签的3大属性是：var、value、scope
+         iii. var就是用一个变量名和value所指示的数据进行关联，value所表示的变量名在之后可以进行引用，并且var也是范围属性在范围内的名称，scope指出了设置的范围；
+         iv. value可以是普通的字符串，也可以用EL表达式返回一个Java中的数据类型；
+         v. 例如：<c:set var="name" value="Peter" scope="session" />，如果value是这样的${user}，则代表设置一个User数据类型的值了；
+			上例就相当于：session.setAttribute("name", "Peter");
+         vi. 当然，如果设置的值非常长，比如是一个长的字符串，则可以用Body的方式编写：
+			<c:set var="sentence" scope="session">  
+			    Good Morning!!!!  
+			</c:set>  		
+		
+		
+		
+EL表达式语言
+1. EL的作用：
+    1) 即Expression Language的缩写，即表达式语言的意思；
+    2) 最主要用来简化一些简单的属性、请求参数、标头、Cookie等信息的获取，在设置JavaBean方面比JSP标准标签更加简洁；
+    3) 可以进一步减少页面中Scriptlet的分量；
+    4) 语法上是使用${ }包裹的表达式；
+    5) 所有EL表达式在JSP中的返回值都是纯字符串；
+    
+2. 获取请求参数并进行运算：
+    1) 要使用EL的隐式对象param来获取，然后用.运算符来存取指定的属性，比如${param.name}，就是获取请求参数中名为"name"的参数的值；
+    2) 可以做加法运算，例如：${param.a + param.b}，这里就用到了EL的算术运算符+，得到的结果是"3"这个字符串；
+		其实param.a等表达式在EL表达式中返回的也是字符串值，在这里如果param.a是"1"，param.b是"2"，那么上述的EL表达式实际上是${"1" + "2"}，那这样就不是两个字符串相加了吗？结果应该是"12"啊？！
+		EL的算数运算符有一个特性，就是如果运算符的两个操作数刚好都是纯数字，例如"1"、"2.3"、"1.3e-4"等（所有C语言支持的常数写法JSP的EL都支持），就是做算数运算而不是字符串连接，然后将运算结果转化为字符串返回！！
+    3) 字面值与字符串：
+         i. 在JSP中字面值和字符串是有区别的，字符串必须是以" "括起来的；
+         ii. 字面值特指数字等，例如1就是一个字面值（没有" "），而"1"就是一个字符串；
+         iii. EL运算符在进行计算时会先判断左右两边是不是字符串（即"xxx"），如果是字符串则再判断可不可以转换成纯数字字面值，如果可以则转换成字面值（例如将"1.23"转换成1.23），最后再进行运算，最后将结果再转换为字符串返回给JSP页面；
+         iv. 计算过程举例：${param.a + param.b}   ->   ${"1.2" + "3.4"}   ->   ${1.2 + 3.4}   ->   ${4.6}   ->   "4.6"；
+    3) 其次EL可以优雅地处理null空值的情况：
+         i. 在上述例子中，如果param.a没有出现在请求参数中，而param.b给出了值，那么param.a就自动变成null值，做运算时会直接忽略param.a（计算时直接当成0来处理）；
+         ii. 其实在内部运算时，EL就是直接把null当做0来处理的，因此像${4 / null}或者${5 / 0}得到的结果就是Infinity（也是JSP的一种常数字面值），而${null + null}的结果就是0；
+         iii. 在EL中允许直接使用null，null其实和Infinity一样，也是一种常数字面值，例如${3 + null}等，在运算表达是中所有的null都会被当成0来处理；
+	4) EL算术运算符的要求：
+         i. 上述EL的算术运算符像+、-、*、/等只能用作数学运算；
+         ii. 不能想当然地认为+可以用作字符串连接！！像${"sle" + "12x"}等，会直接抛出异常！！！
+         iii. EL算数表达式只能避免null值异常，但不能避免这种无法转换成数字字面值的异常！！！	
+3. .运算符的更多作用：
+    1) 不仅可以提取某个对象的属性，也可以调用对象的getter：
+         i. 例如获取EL隐式对象pageContext的request，则可以这样写：${pageContext.request}；
+         ii. 其实pageContext并没有request这一属性，但是pageContext有getRequest这一getter，因此该EL表达式会被转译成pageContext.getRequest()；
+     2) .运算符存取属性的规则：以target.xxx为例
+         i. 先在target中寻找有没有名为"xxx"的属性，如果有则直接返回；
+         ii. 如果没有，则寻找是否有名为getXxx的getter，如果有则变成调用getXxx方法；
+     3) .运算符可以连续存取对象并自动完成类型转换：
+         i. 例如用Java代码来编写获取当前请求方法的语句就是：<%= ((HttpServletRequest)pageContext.getRequest()).getMethod() %>
+         ii. 但是用EL表达式可以简化成这样：${pageContext.request.method}，不仅可以连续调用getter，更能完成自动的类型转换！！！
+4. 关闭EL：
+    1) 有时候在页面中使用了某种模板，而在该模板中用到了类似${ }的语法，这就导致了和EL表达式的直接冲突，因此就需要关闭EL的功能；
+    2) 可以使用page指示元素的isELIgnored属性进行设置，默认是false，就是不忽略，如果为true就是忽略，就关闭了EL功能；
+    3) 同样也可以在web.xml的<jsp-property-group>中的<el-ignored>标签中设置，true为忽略，false为不忽略；
+    4) 如果在指示元素和web.xml中同时设置了，则以指示元素为准，web.xml只是一种统一的默认部署行为；
+		
+		
+		
+		
+		
+		
+		
+		
+		

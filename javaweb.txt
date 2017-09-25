@@ -1,0 +1,2 @@
+在jsp页面中要使用request等内置对象必须从pageContext中获取
+pageContext.request
