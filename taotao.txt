@@ -1,0 +1,97 @@
+把系统拆分成多个工程，需要完成系统的工程需要多个工程协作完成。这种形式叫做分布式。
+分布式架构
+	
+	
+
+
+	
+taotao-parent：pom父项目
+	|-taotao-common（jar包）：工具类工程
+	|-taotao-manager：pom工程（聚合工程）（右键-maven-Maven Module创建子模块）
+		|-taotao-manager-pojo（jar包）
+		|-taotao-manager-mapper（jar包）
+		|-taotao-manager-service（jar包）
+		|-taotao-manager-controller（war包）
+
+要在tomcat中，运行聚合工程taotao-manager
+在taotao-manager的pom文件中添加tomcat插件
+
+在互联网行业的项目中尽可能的减少表的关联查询
+
+sku：最小库存量单位。
+
+
+ssm框架整合
+	Dao层：使用mybatis框架。创建SqlMapConfig.xml
+	创建一个applicationContext-dao.xml
+		配置数据源
+		需要让spring容器管理SqlSessionFactory，单例存在
+		把mapper的代理对象放到spring容器中。使用扫描包的方式，加载mapper的代理对象。
+	
+	Service层：
+		事务管理
+		需要把service实现类对象放到spring容器中
+		
+	表现层
+		配置注解驱动
+		配置视图解析器
+		配置扫描controller
+		
+	web.xml
+		spring容器的配置
+		springmvc前端控制器的配置
+		post乱码过滤器的配置
+		
+需要把所有的配置文件放到taotao-manager-web工程下。因为此工程为war工程，其他的只是一个jar包。
+	mybatis整合：SqlMapConfig.xl
+	spring整合Dao：applicationContext-dao.xml
+	
+		
+spring和springmvc父子容器的关系
+
+maven tomcat插件的使用
+
+
+分页插件的使用
+	第一步：引入pageHelper的jar包。
+	第二步：需要在SqlMapConfig.xml中配置插件。
+		<!-- 配置分页插件 -->
+		<plugins>
+			<plugin interceptor="com.github.pagehelper.PageHelper">
+				<!-- 设置数据库类型 Oracle,Mysql,MariaDB,SQLite,Hsqldb,PostgreSQL六种数据库-->        
+	        	<property name="dialect" value="mysql"/>
+			</plugin>
+		</plugins>
+	第三步：在查询的sql语句执行之前，添加一行代码：
+	PageHelper.startPage(1, 10);
+	第一个参数是page，要显示第几页。
+	第二个参数是rows，每页显示的记录数。
+	第四步：取查询结果的总数量。
+	创建一个PageInfo类的对象，从对象中取分页信息。
+
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
