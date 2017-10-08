@@ -51,26 +51,66 @@ spring和springmvc父子容器的关系
 
 maven tomcat插件的使用
 
-
-分页插件的使用
-	第一步：引入pageHelper的jar包。
-	第二步：需要在SqlMapConfig.xml中配置插件。
-		<!-- 配置分页插件 -->
-		<plugins>
-			<plugin interceptor="com.github.pagehelper.PageHelper">
-				<!-- 设置数据库类型 Oracle,Mysql,MariaDB,SQLite,Hsqldb,PostgreSQL六种数据库-->        
-	        	<property name="dialect" value="mysql"/>
-			</plugin>
-		</plugins>
-	第三步：在查询的sql语句执行之前，添加一行代码：
-	PageHelper.startPage(1, 10);
-	第一个参数是page，要显示第几页。
-	第二个参数是rows，每页显示的记录数。
-	第四步：取查询结果的总数量。
-	创建一个PageInfo类的对象，从对象中取分页信息。
-
+商品列表的查询
+	Easyui中datagrid控件要求的数据格式为：
+		{total:”2”,rows:[{“id”:”1”,”name”,”张三”},{“id”:”2”,”name”,”李四”}]}
+		在taotao-common中创建pojo：EasyUIDateGridResult(使用泛型)
+	
+	分页插件的使用
+		第一步：引入pageHelper的jar包。
+		第二步：需要在SqlMapConfig.xml中配置插件。
+			<!-- 配置分页插件 -->
+			<plugins>
+				<plugin interceptor="com.github.pagehelper.PageHelper">
+					<!-- 设置数据库类型 Oracle,Mysql,MariaDB,SQLite,Hsqldb,PostgreSQL六种数据库-->        
+		        	<property name="dialect" value="mysql"/>
+				</plugin>
+			</plugins>
+		第三步：在查询的sql语句执行之前，添加一行代码：
+			PageHelper.startPage(1, 10);
+				第一个参数是page，要显示第几页。
+				第二个参数是rows，每页显示的记录数。
+		第四步：取查询结果的总数量。
+			创建一个PageInfo类的对象，从对象中取分页信息。
+	
+商品的添加
+	商品类目的选择
+	Dao层：
+	Service:
+	Controller:
+	
+	图片的上传：
+		图片服务器
+			需要一个http服务器，可以使用apache Nginx
+			使用ftp服务上传图片，使用linux自带的ftp服务，vsftpd
+			
+			需要的软件
+				linux centos6.4
+				nginx
+				vsftpd
+			安装http服务
+			Nginx的安装
+			
+	ftp使用：
+		//1、连接ftp服务器
+		FTPClient ftpClient = new FTPClient();
+		ftpClient.connect("192.168.25.133", 21);
+		//2、登录ftp服务器
+		ftpClient.login("ftpuser", "ftpuser");
+		//3、读取本地文件
+		FileInputStream inputStream = new FileInputStream(new File("D:\\Documents\\Pictures\\images\\2010062119283578.jpg"));
+		//4、上传文件
+			//1）指定上传目录
+			ftpClient.changeWorkingDirectory("/home/ftpuser/www/images");
+			//2）指定文件类型
+			ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
+			//第一个参数：文件在远程服务器的名称
+			//第二个参数：文件流
+			ftpClient.storeFile("hello.jpg", inputStream);
+		//5、退出登录
+				
 		
-		
+		在springmvc.xml中配置加载properties
 		
 		
 		

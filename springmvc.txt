@@ -1,3 +1,29 @@
+spring web在启动的时候会创建2个容器，一个是spring容器，一个是springmvc容器，springmvc容器是spring容器的子容器
+	controller就是springmvc的component，而service是spring的component。
+	子容器可以访问父容器中的对象，而父容器不能访问子容器的对象。
+	|------------------------------------------------------
+	|  父容器：                                            |
+	|     spring容器                                       |
+	|         controller                                   |
+	|         service                                      |
+	|         dao                                          |
+	|      父容器不能访问子容器对象                        |
+	|                                                      |
+	|                                                      |
+	|                                                      |
+	|                           |--------------------------|
+	|                           |子容器：                  |
+	|                           |    springmvc容器         |
+	|                           |          controller      |
+	|                           |    子容器可以访问        |
+	|                           |         父容器中的对象   |
+	|                           |                          |
+	|                           |                          |
+	|                           |                          |
+	|                           |                          |
+	|————-----------------------|————————————--------------|
+	
+
     <!-- 配置context-param一定要配置 ContextLoaderListner！！！！！！！！ -->
     <context-param>
         <param-name>contextConfigLocation</param-name>
