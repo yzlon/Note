@@ -1,3 +1,4 @@
+@VALUE注解，只能在service里面使用，在controller中无效，因为controller在springmvc容器中，service在spring容器中管理。
 批量加载配置
 	classpath*:xxx.xml
 
