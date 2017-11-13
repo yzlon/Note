@@ -1,3 +1,6 @@
+GET方式经过servlet后，汉字默认的编码格式是iso-8859-1
+
+
 把系统拆分成多个工程，需要完成系统的工程需要多个工程协作完成。这种形式叫做分布式。
 分布式架构
 	
@@ -115,23 +118,197 @@ maven tomcat插件的使用
 		
 		
 		
+商品的规格
+	每一类商品有多个分组
+	每个分组有多个项
+	每个商品对应不同的规格参数
+		商品分类表
+			tb_item_cat
+		商品规格分组表
+			tb_item_param_group
+		商品规格项
+			tb_item_param_key
+		商品表
+			tb_item	
+		商品规格信息表
+			t_item_param_value
+		
+		外连接
+	问题：
+		需要创建多张表来描述规格参数之间的关系
+		查询时需要复杂的sql语句查询
+		规格参数数据量是商品信息的几十倍，数据量十分庞大。查询效率很低。
+		如果要求新添加的商品规格项发生变化，之前的商品不变是不能实现的
+	
+	解决方案
+		可以使用模板
+		模板格式：
+			{
+				{
+					"group":"主体",
+					"params":[
+								"",
+								""
+							 ]
+				}，
+				{
+				
+				}
+			}
+		
+初始化：相当于传递的是一个json
+	TAOTAO.initItemCat({
+			fun:function(node){
+			$(".addGroupTr").hide().find(".param").remove();
+				//  判断选择的目录是否已经添加过规格
+			  $.getJSON("/item/param/query/itemcatid/" + node.id,function(data){
+				  if(data.status == 200 && data.data){
+					  $.messager.alert("提示", "该类目已经添加，请选择其他类目。", undefined, function(){
+						 $("#itemParamAddTable .selectItemCat").click();
+					  });
+					  return ;
+				  }
+				  $(".addGroupTr").show();
+			  });	
 		
 		
 		
 		
 		
+淘淘页面左侧菜单
+	dao：
+	service：
+		查询所有商品的分类生成前台要求的json数据格式。返回一个pojo。
+		创建2个pojo：
+			CatNode分类列表节点，包含u、n、i属性
+			CatResult返回值pojo，包含一个data属性，是一个list类型。
+		放到taotao-rest里面
+		
+		用@JsonProperty注解来把类属性转换成json的属性
+		
+		设置jsonp		
+			MappingJacksonValue mapping = new MappingJacksonValue(itemCatResult);
+			mapping.setJsonpFunction(callback);
 		
 		
+在controller中解决返回数据的乱码问题
+	返回的是字符串
+		@RequestMapping(value="/httpclient/post", method=RequestMethod.POST, produces=MediaType.TEXT_PLAIN_VALUE+";charset=utf-8")		
 		
 		
+	
+Redis集群的安装
+	redis，单机版默认是16个数据库。默认使用0
+			集群只有一个0号库。
+	ping-pong机制进行互联，内部使用二进制
+	投票容错机制
+	集群上所有数据都不一样。
+	HashSlot：哈希槽
+	有一个master挂掉，且此master没有slave，则整个集群down。
+	如果一半以上的master挂掉，即使有slave，也要down
+	
+	模拟集群结构
+		集群中有3个节点。每个节点有一主一备。需要6台机器。
+		搭建一个伪分布式的集群，使用6个redis实例来模拟。
 		
+		搭建集群需要的环境
+			需要用到官方提供的ruby脚本。
+			需要ruby的环境。
+				yum install ruby
+				yum install rubygems
+					管理ruby的包
+					
+		redis集群管理工具	redis-tib.rb
+			依赖的包redis-3.0.0.gem(装了这个工具才能运行上面的rb)
+		安装ruby的包
+			gem install redis-3.0.0.gem
+	
+	集群的搭建
+		在local目录下创建redis-cluster
+		cp redis 到此目录  更名为 redis01
+			dump.rdb（默认的方式)
+			删掉dump.rdb
+			修改redis.config
+				6个redis实例，端口号从7001-7006
+				cluster-enabled = yes
+		把创建集群的ruby脚本redis-trib.rb复制到redis-cluster目录下
+		启动6个redis实例
+		创建集群
+			./redis-trib.rb create --replicas 1 192.168.199.134:7001 ......
+	
+		测试集群
+			使用任意节点下的redis-cli
+				./redis-cli -h 192.168.199.134 -p 7001 -c
+					-c：一定要加上
+	
+	redis客户端
+		redis-cli：自带的客户端
+		redis-deskto-manager：图形化客户端，不支持集群
+		jedis客户端：
+			单机版
+	
+	
+	
+	
+	
+单点登录系统
+	
+	
+cookie共享
+	domain必须是相同的
+	例如有多个域名
+		www.taotao.com
+		sso.taotao.com
+		search.taotao.com
+		需要设置domain为.taotao.com（必须以.开头）
+		设置path：/(根目录)
 		
+	如果是localhost就不要设置domain直接设置path就可以了。
+	工具类 CookieUtils放到taotao-commons里面
+	
+	
+	重要的数据要用关系型数据库，保证数据的正确性。
+	
+	
+订单系统taotao-order	
+	订单表 tb_order
+	订单明细表 tb_order_item
+	物流表tb_order_shopping
 		
-		
-		
-		
-		
-		
-		
-		
-		
+	使用@RequestBody接收一个json串。然后使用一个java对象的pojo进行接收
+	@ResponseBody响应一个字符串，如果是java对象，要进行转换。	
+	
+	
+zookeeper系统
+	linux环境
+	jdk
+	zookeeper
+	
+	配置zookeeper
+		1、在每个zookeeper文件夹下创建data文件夹
+		2、分别在data文件下创建文件myid的文件，文件内容就是此机器的编号1、2、3
+		3、在zookeeper/conf/下复制zoo_sample.cfg为zoo.cfg
+		4、修改zoo.cfg
+			配置
+				dataDir=/usr/xx/x/data
+				clientPort=2881
+			添加
+				server.1=192.168.199.11.2881:3881(2881选举端口，3881投票端口)
+				server.1=192.168.199.11.2882:3882(2881选举端口，3881投票端口)
+				server.1=192.168.199.11.2883:3883(2881选举端口，3881投票端口)
+		5、启动zookeeper
+			进入zookeeper/bin目录 ./zkServer.sh start
+			查看状态
+solr集群
+	创建4个tomcat，修改端口		
+	
+	1、把solrhome中的配置文件上传到zookeeper集群，使用zookeeper的客户端上传。（solr中的zkcli.sh
+	
+	
+	
+	rpm命令	
+	
+生产：
+	使用maven插件实现热部署
+	需要使用tomcat的
+		maven打包->上传->热部署
