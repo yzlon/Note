@@ -24,7 +24,7 @@ spring web在启动的时候会创建2个容器，一个是spring容器，一个是springmvc容器，spri
 	|————-----------------------|————————————--------------|
 	
 
-    <!-- 配置context-param一定要配置 ContextLoaderListner！！！！！！！！ -->
+    <!-- 配置context-param一定要配置 ContextLoaderListener！！！！！！！！ -->
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>classpath:applicationContext.xml</param-value>
@@ -53,7 +53,7 @@ action="${pageContext.request.contextPath}/items/editItemsSubmit.action"
 
 
 spring框架的原理（掌握）
-    前段控制器、处理映射器、处理适配器、视图解析器
+    前端控制器、处理映射器、处理适配器、视图解析器
 spring入门程序
     目的：
     非注解的处理映射器、处理器适配器
